@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSPy 入门指南 · 从第一性原理到完整工作流</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #171a23;
+    --surface2: #1e2230;
+    --border: #2a2f3e;
+    --text: #e4e6eb;
+    --text-dim: #9aa0ae;
+    --accent: #6ea8fe;
+    --accent2: #a78bfa;
+    --green: #4ade80;
+    --orange: #fb923c;
+    --red: #f87171;
+    --code-bg: #12141c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+
+  header .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 3px 12px;
+    margin-bottom: 20px;
+    opacity: 0.85;
+  }
+
+  header h1 {
+    font-size: 2.3em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e4e6eb 0%, #6ea8fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--text-dim);
+    font-size: 1.05em;
+    max-width: 640px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 64px;
+  }
+
+  .toc h2 {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc li {
+    counter-increment: toc;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc li:last-child { border-bottom: none; }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    transition: color 0.15s;
+  }
+
+  .toc a:hover { color: var(--accent); }
+
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-size: 0.8em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    min-width: 28px;
+  }
+
+  /* ── Sections ── */
+  section {
+    margin-bottom: 80px;
+    scroll-margin-top: 24px;
+  }
+
+  section > h2 {
+    font-size: 1.7em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+    position: relative;
+  }
+
+  section > h2::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 64px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  section > .subtitle {
+    color: var(--text-dim);
+    font-size: 0.95em;
+    margin-bottom: 32px;
+    margin-top: 12px;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    font-weight: 650;
+    margin: 40px 0 16px;
+    color: var(--accent);
+  }
+
+  h4 {
+    font-size: 1.02em;
+    font-weight: 600;
+    margin: 28px 0 12px;
+    color: var(--text);
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  strong { color: #fff; font-weight: 650; }
+
+  em { color: var(--accent2); font-style: normal; }
+
+  /* ── Code ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-size: 0.88em;
+    line-height: 1.65;
+  }
+
+  code {
+    font-family: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+  }
+
+  p code, li code, td code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--accent);
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  /* Syntax-ish coloring */
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .cm { color: #5c6370; font-style: italic; }
+  .num { color: #f78c6c; }
+  .cls { color: #ffcb6b; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.92em;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.88em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: var(--surface); }
+
+  /* ── Callouts ── */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 24px;
+    margin: 24px 0;
+    font-size: 0.95em;
+  }
+
+  .callout.warn { border-left-color: var(--orange); }
+  .callout.key { border-left-color: var(--green); }
+  .callout.danger { border-left-color: var(--red); }
+
+  .callout .label {
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .callout.warn .label { color: var(--orange); }
+  .callout.key .label { color: var(--green); }
+  .callout.danger .label { color: var(--red); }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── Principle box ── */
+  .principle {
+    background: linear-gradient(135deg, rgba(110,168,254,0.08), rgba(167,139,250,0.08));
+    border: 1px solid rgba(110,168,254,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .principle .label {
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--accent2);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .principle p:last-child { margin-bottom: 0; }
+
+  /* ── Step markers ── */
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 36px 0 16px;
+  }
+
+  .step-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #0f1117;
+    font-weight: 700;
+    font-size: 0.85em;
+    flex-shrink: 0;
+  }
+
+  .step h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.1em;
+  }
+
+  /* ── Lists ── */
+  ul, ol {
+    margin: 16px 0 16px 24px;
+  }
+
+  li {
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  li::marker { color: var(--accent); }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.88em;
+    text-align: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.7em; }
+    section > h2 { font-size: 1.35em; }
+    pre { padding: 16px; font-size: 0.82em; }
+    .container { padding: 0 16px 80px; }
+    .toc { padding: 20px; }
+    table { font-size: 0.82em; }
+    th, td { padding: 9px 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge">DSPy 学习笔记</div>
+  <h1>从第一性原理理解 DSPy</h1>
+  <p>把跟大模型打交道的方式，从“写提示词”变成“写程序”。这是一条从签名、模块、组合、指标，到 GEPA 优化与保存部署的完整学习路径。</p>
+</header>
+
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s0">总纲：LLM 应用的本质是一个函数</a></li>
+    <li><a href="#s1">签名（Signature）：声明“要什么”</a></li>
+    <li><a href="#s2">类签名：信息分层的艺术</a></li>
+    <li><a href="#s3">更换模块：从 Predict 到 ChainOfThought</a></li>
+    <li><a href="#s4">ReAct 与工具：给程序装上手和脚</a></li>
+    <li><a href="#s5">组合模块：构建复杂 AI 系统的心法</a></li>
+    <li><a href="#s6">指标（Metrics）：定义“更好”</a></li>
+    <li><a href="#s7">GEPA 优化：让程序自己写提示词</a></li>
+    <li><a href="#s8">保存与加载：把优化成果变成资产</a></li>
+    <li><a href="#s9">全景总结：DSPy 工作流的六个阶段</a></li>
+  </ol>
+</nav>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s0">
+  <h2>总纲：LLM 应用的本质是一个函数</h2>
+  <p class="subtitle">第一性原理 · 为什么要“编程”而不是“写提示词”</p>
+
+  <p>传统提示词工程靠手工试错：改提示词、看结果、再改。语言模型对提示词非常敏感，稍微改动输出就不同。开发 LM 应用时，常要测试大量变体，过程困难、耗时、难维护。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p><strong>如果 LLM 调用本质上是一个函数，那我们就应该用定义函数的方式去定义它——声明输入输出类型，然后让框架负责“怎么调用”。</strong></p>
+  </div>
+
+  <p>这就是 DSPy 反复强调的那句话：<em>Program, don't prompt.</em></p>
+
+  <table>
+    <thead>
+      <tr><th>传统提示词工程</th><th>DSPy 程序</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>手写一段字符串</td><td>声明 <code>输入 -&gt; 输出</code></td></tr>
+      <tr><td>手动调整措辞</td><td>框架自动生成提示词</td></tr>
+      <tr><td>换模型要重写</td><td>签名不变，换 LM 即可</td></tr>
+      <tr><td>无法系统优化</td><td>用优化器自动搜索更好的提示</td></tr>
+    </tbody>
+  </table>
+
+  <h3>DSPy 名称含义</h3>
+  <ul>
+    <li><strong>Declarative / 声明式</strong>：声明想做什么，而不是提供具体提示词。</li>
+    <li><strong>Self-improving / 自我改进</strong>：自动改进生成的提示词。</li>
+    <li><strong>Python</strong>：用 Python 开发。</li>
+  </ul>
+
+  <h3>苦涩的教训</h3>
+  <p>Richard Sutton《The Bitter Lesson》：利用计算的通用方法最终最有效，而且优势很大。长期看，真正重要的是利用计算。</p>
+  <p>AI 的最佳做法通常是让应用搜索解空间，自己学习。提示词开发也如此：<strong>自动搜索和学习的系统最终会比手工提示词工程更有效。</strong></p>
+
+  <h3>推荐开发流程</h3>
+  <ol>
+    <li>创建简单基线应用；</li>
+    <li>评估基线；</li>
+    <li>优化应用；</li>
+    <li>满意后投入生产。</li>
+  </ol>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s1">
+  <h2>签名（Signature）：声明“要什么”</h2>
+  <p class="subtitle">接口隔离 · 把 what 和 how 分开</p>
+
+  <p>官网的起始代码只有四行：</p>
+
+  <pre><code><span class="kw">import</span> dspy
+
+lm = dspy.<span class="fn">LM</span>(<span class="str">"openai/gpt-4o-mini"</span>)
+dspy.<span class="fn">configure</span>(lm=lm)
+
+haiku_signature = <span class="str">"subject -> haiku"</span>
+haiku_generator = dspy.<span class="fn">Predict</span>(haiku_signature)
+result = <span class="fn">haiku_generator</span>(subject=<span class="str">"computer science"</span>)
+<span class="fn">print</span>(result.haiku)</code></pre>
+
+  <div class="step">
+    <span class="step-num">1</span>
+    <h3>签名（Signature）——声明“要什么”</h3>
+  </div>
+
+  <pre><code>haiku_signature = <span class="str">"subject -> haiku"</span></code></pre>
+
+  <p>这行代码定义了一个<strong>签名</strong>。签名就是 DSPy 里的“函数声明”——它不关心怎么实现，只关心输入和输出是什么。字符串 <code>"subject -&gt; haiku"</code> 被 DSPy 解析成一个签名类，输入字段 <code>subject</code> 和输出字段 <code>haiku</code> 默认都是字符串类型。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>签名只描述 <em>what</em>，不描述 <em>how</em>。这一步是在做<strong>接口隔离</strong>。</p>
+  </div>
+
+  <div class="callout">
+    <span class="label">命名的重要性</span>
+    <p>变量名本身就是给模型的提示。如果你把 <code>haiku</code> 改成 <code>limerick</code>，模型就会写一首打油诗而不是俳句，输出字段也会变成 <code>result.limerick</code>。</p>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span>
+    <h3>模块（Module）——决定“怎么做”</h3>
+  </div>
+
+  <pre><code>haiku_generator = dspy.<span class="fn">Predict</span>(haiku_signature)</code></pre>
+
+  <p><code>dspy.Predict</code> 是一个<strong>模块</strong>。如果说签名是“函数声明”，那模块就是“函数实现策略”。</p>
+
+  <p>执行 <code>dspy.Predict(haiku_signature)</code> 时，DSPy 在后台做了三件事：</p>
+  <ol>
+    <li>把字符串签名解析成 <code>Signature</code> 类。</li>
+    <li><strong>自动生成默认指令</strong>。对于 <code>subject -&gt; haiku</code>，默认指令是 <code>"Given the fields subject, produce the fields haiku."</code></li>
+    <li>实例化一个 <code>Predict</code> 模块。</li>
+  </ol>
+
+  <div class="step">
+    <span class="step-num">3</span>
+    <h3>调用——背后到底发生了什么</h3>
+  </div>
+
+  <p>当你调用 <code>haiku_generator(subject="computer science")</code>，DSPy 的运行时开始工作：</p>
+  <ol>
+    <li><strong>检查 LM 配置</strong>：确认已设置默认语言模型。</li>
+    <li><strong>Adapter 渲染</strong>：用 <code>ChatAdapter</code> 把签名、指令、输入渲染成 LLM 能消费的消息格式。</li>
+    <li><strong>构建提示词</strong>：把指令、字段 schema、格式说明和输入值拼成完整提示词。</li>
+    <li><strong>调用 LLM</strong>：消息发给 LLM，默认开启缓存。</li>
+    <li><strong>解析响应</strong>：从返回文本中提取输出字段。</li>
+    <li><strong>返回 Prediction</strong>：返回 <code>Prediction</code> 对象。</li>
+    <li><strong>记录历史</strong>：可用 <code>dspy.inspect_history(n=1)</code> 查看完整提示词和响应。</li>
+  </ol>
+
+  <div class="principle">
+    <span class="label">核心洞察</span>
+    <p>你写的是四行 Python，但背后跑的是一个完整的<strong>提示词编译管道</strong>——指令生成可替换、Adapter 可替换、缓存可配置、历史可检查。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s2">
+  <h2>类签名：信息分层的艺术</h2>
+  <p class="subtitle">当字符串签名的表达能力不够时</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>字符串签名有“能力边界”：无法附加语义说明、无法约束取值类型、无法撰写独立任务指令。<strong>类签名就是为解决这三个“无处安放”而存在的。</strong></p>
+  </div>
+
+  <h3>类签名的四层结构</h3>
+
+  <pre><code><span class="kw">from</span> typing <span class="kw">import</span> Literal
+<span class="kw">import</span> dspy
+
+<span class="kw">class</span> <span class="cls">HaikuBot</span>(dspy.Signature):
+    <span class="str">"""Write a haiku about the given subject, using evocative imagery."""</span>
+
+    location: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>(desc=<span class="str">"The place the haiku should evoke"</span>)
+    season: <span class="fn">Literal</span>[<span class="str">"spring"</span>, <span class="str">"summer"</span>, <span class="str">"autumn"</span>, <span class="str">"winter"</span>] = dspy.<span class="fn">InputField</span>()
+    mood: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>()
+    haiku: <span class="fn">str</span> = dspy.<span class="fn">OutputField</span>(desc=<span class="str">"A 5-7-5 syllable poem"</span>)</code></pre>
+
+  <table>
+    <thead>
+      <tr><th>层级</th><th>写什么</th><th>优化器是否可改</th><th>第一性原理角色</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>类名</strong></td><td>语义化命名</td><td>否</td><td>代码可读性</td></tr>
+      <tr><td><strong>Docstring</strong></td><td>任务意图、语气、高层指导</td><td><strong>是</strong></td><td>可优化的指令变量</td></tr>
+      <tr><td><strong>字段名</strong></td><td>输入输出的语义角色</td><td>否</td><td>不可变锚点</td></tr>
+      <tr><td><strong>字段类型</strong></td><td><code>str</code>、<code>bool</code>、<code>Literal</code>、Pydantic 约束</td><td>否</td><td>运行时契约</td></tr>
+      <tr><td><strong>字段 desc</strong></td><td>字段级的补充说明</td><td>否</td><td>不可变锚点</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="label">关键设计决策</span>
+    <p><strong>优化器可以改写 docstring，但不会碰字段名和 <code>desc</code>。</strong>这意味着字段名选得不好，优化器无法帮你修正。这个区分决定了你的注意力分配：<em>字段名要反复斟酌，docstring 可以大胆写，让优化器去改。</em></p>
+  </div>
+
+  <h3>类型约束：把提示词中的约束变成类型系统中的约束</h3>
+
+  <p><code>Literal</code> 把 <code>season</code> 字段锁定在四个值上。DSPy 底层用的是 Pydantic，每一个字段都是一个 Pydantic <code>FieldInfo</code>。这意味着<strong>任何 Pydantic 约束都可以用</strong>：<code>gt</code>、<code>lt</code>、<code>min_length</code>、<code>max_length</code> 等。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>在传统提示词工程里，“season 必须是这四个之一”是一个<strong>建议</strong>；在 DSPy 里，<code>Literal</code> 是一个<strong>运行时会强制执行的契约</strong>。</p>
+  </div>
+
+  <h3>Docstring 和 Module 的分工</h3>
+  <div class="callout key">
+    <span class="label">设计原则</span>
+    <p><strong>Instructions live on the signature, not the module.</strong> 签名管“做什么”，模块管“怎么做”。同一个签名可以交给 <code>Predict</code>、<code>ChainOfThought</code>、<code>ReAct</code> 中的任何一个。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s3">
+  <h2>更换模块：从 Predict 到 ChainOfThought</h2>
+  <p class="subtitle">一行代码的变化，背后是装饰器模式</p>
+
+  <p>代码变化极其克制：</p>
+
+  <pre><code><span class="cm"># 之前</span>
+haiku_generator = dspy.<span class="fn">Predict</span>(HaikuBot)
+
+<span class="cm"># 之后</span>
+reasoning_haiku_bot = dspy.<span class="fn">ChainOfThought</span>(HaikuBot)</code></pre>
+
+  <p><strong>签名 <code>HaikuBot</code> 一个字没改。函数调用完全一致。</strong>唯一区别是模块从 <code>Predict</code> 变成了 <code>ChainOfThought</code>。</p>
+
+  <h3>幕后机制：DSPy 对签名做了什么</h3>
+
+  <p><code>ChainOfThought</code> 在初始化时，接收 <code>HaikuBot</code> 作为基础签名，然后在内存中构造一个新的签名对象。这个新签名继承了你 <code>HaikuBot</code> 的全部内容，但<strong>在前面插入了一个额外的输出字段</strong>：<code>reasoning</code>。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>这是<strong>装饰器模式</strong>在签名层面的应用。签名没有被替换，而是被包裹了一层。基础契约完全保留，只是多了一个<strong>中间产物</strong>：推理过程。</p>
+  </div>
+
+  <h3>reasoning 字段的意义</h3>
+
+  <p>新签名多出的 <code>reasoning</code> 输出字段，被 DSPy 自动放置在 <code>haiku</code> 输出字段<strong>之前</strong>。模型被要求<strong>先产出推理文本，再产出俳句</strong>。</p>
+
+  <p><code>reasoning</code> 不是一个“答案字段”，它是一个<strong>过程字段</strong>。它的存在改变了模型的生成轨迹——从“直接输出答案”变成“先展开推理，再收敛到答案”。</p>
+
+  <h3>模块层的灵活性</h3>
+
+  <table>
+    <thead>
+      <tr><th>模块</th><th>对签名的操作</th><th>执行结构</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Predict</code></td><td>原样使用</td><td>单步生成</td></tr>
+      <tr><td><code>ChainOfThought</code></td><td>运行时插入 <code>reasoning</code> 字段</td><td>单步推理后生成</td></tr>
+      <tr><td><code>ProgramOfThought</code></td><td>生成并执行 Python 代码</td><td>代码执行</td></tr>
+      <tr><td><code>BestOfN</code></td><td>多次采样，选最佳</td><td>多候选</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout key">
+    <span class="label">核心洞察</span>
+    <p><strong>模块对签名的“修改”是运行时行为，不是代码修改。</strong>你写的 <code>HaikuBot</code> 是一个纯净的接口声明。策略可以随时替换，接口本身毫发无损。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s4">
+  <h2>ReAct 与工具：给程序装上手和脚</h2>
+  <p class="subtitle">从“想”到“做”的质变</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>语言模型的知识是冻结的、近似的、不可验证的。<strong>当模型的知识不足以支撑一个可靠输出时，给它一个“去做点什么”的出口。</strong></p>
+  </div>
+
+  <h3>工具：就是一个普通的 Python 函数</h3>
+
+  <pre><code><span class="kw">import</span> wikipedia
+
+<span class="kw">def</span> <span class="fn">wikipedia_search</span>(query: <span class="fn">str</span>) -> <span class="fn">list</span>[<span class="fn">str</span>]:
+    <span class="str">"""Search Wikipedia for the given query and return a list of page titles."""</span>
+    <span class="kw">return</span> wikipedia.<span class="fn">search</span>(query)
+
+<span class="kw">def</span> <span class="fn">get_wikipedia_page</span>(title: <span class="fn">str</span>) -> <span class="fn">str</span>:
+    <span class="str">"""Fetch the full content of a Wikipedia page given its title."""</span>
+    <span class="kw">return</span> wikipedia.<span class="fn">page</span>(title).content</code></pre>
+
+  <p><strong>没有任何装饰器，没有任何继承，没有任何特殊标记。</strong>DSPy 读的是三样东西：函数名、参数名和类型、docstring。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>工具不是“DSPy 特有的东西”，而是<strong>DSPy 对普通 Python 函数的一次语义解读</strong>。任何你已有的 Python 函数，加上类型提示和 docstring，就是一个 DSPy 工具。</p>
+  </div>
+
+  <h3>ReAct：一个“推理-行动”循环</h3>
+
+  <pre><code>haiku_bot = dspy.<span class="fn">ReAct</span>(
+    HaikuBot,
+    tools=[wikipedia_search, get_wikipedia_page],
+    max_iters=<span class="num">4</span>
+)</code></pre>
+
+  <p>循环的四个步骤：</p>
+  <ol>
+    <li><strong>推理</strong>：模型看到任务和可用工具列表，思考“我现在需要做什么？”</li>
+    <li><strong>行动</strong>：模型选择一个工具，填入参数，调用它。</li>
+    <li><strong>观察</strong>：工具返回结果，模型看到这个结果。</li>
+    <li><strong>判断</strong>：信息够了吗？够了就调用 <code>finish</code>，不够就回到第 1 步。</li>
+  </ol>
+
+  <div class="callout">
+    <span class="label">关键细节</span>
+    <p><strong>循环次数是模型自己决定的。</strong>有些任务需要多次搜索，有些任务模型觉得不需要查证就能做。<code>max_iters=4</code> 只是一个<strong>安全上限</strong>，防止模型陷入无限循环。</p>
+  </div>
+
+  <h3>finish：一个特殊的内置工具</h3>
+
+  <p>你只定义了两个工具，但模型实际看到的是三个。<code>finish</code> 是 <code>ReAct</code> 自动注入的，它告诉模型：“当你觉得信息足够了，调用这个工具来结束循环。”</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p><code>finish</code> 的存在把“是否继续”这个决策<strong>显式化</strong>了。只要模型没调用 <code>finish</code>，循环就继续。</p>
+  </div>
+
+  <h3>trajectory：循环的“黑匣子记录”</h3>
+
+  <pre><code>result = <span class="fn">haiku_bot</span>(location=<span class="str">"Camp Meeker"</span>, mood=<span class="str">"pensive"</span>, season=<span class="str">"summer"</span>)
+<span class="fn">print</span>(result.trajectory)</code></pre>
+
+  <p><code>trajectory</code> 里记录了每一次“推理 → 调用 → 观察”的完整序列。前两个模块是<strong>单步的</strong>，<code>ReAct</code> 是<strong>多步的</strong>，中间状态变得重要。<code>trajectory</code> 就是 DSPy 为多步程序提供的<strong>可观测性机制</strong>。</p>
+
+  <table>
+    <thead>
+      <tr><th>模块</th><th>对签名的操作</th><th>执行结构</th><th>能力边界</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Predict</code></td><td>原样使用</td><td>单步生成</td><td>只能依赖内部知识</td></tr>
+      <tr><td><code>ChainOfThought</code></td><td>插入 <code>reasoning</code></td><td>单步推理后生成</td><td>推理更充分，但仍封闭</td></tr>
+      <tr><td><code>ReAct</code></td><td>注入 <code>finish</code></td><td><strong>多步循环</strong></td><td><strong>可以获取外部信息</strong></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s5">
+  <h2>组合模块：构建复杂 AI 系统的心法</h2>
+  <p class="subtitle">模块是可组合的积木</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p><code>ReAct</code> 本身就是由 <code>Predict</code> 和 <code>ChainOfThought</code> 组合而成的。<strong>模块是构建块，它们本身就是为组合而生的。</strong><code>dspy.Module</code> 就是 DSPy 世界里的“组合单元”。</p>
+  </div>
+
+  <h3>dspy.Module 的契约</h3>
+
+  <p>构建自定义模块需要实现两个函数：</p>
+  <ul>
+    <li><strong><code>__init__()</code></strong>：设置初始状态，并<strong>定义子模块</strong>。</li>
+    <li><strong><code>forward()</code></strong>：处理调用时的逻辑，让数据流经子模块。</li>
+  </ul>
+
+  <p><strong>为什么是这两个函数？</strong>框架通过遍历 <code>self.__dict__</code> 来发现子模块（用于优化器搜索、序列化）。<code>forward</code> 是运行时逻辑的“包裹”位置。这种分离确保了<strong>优化器能看到什么</strong>和<strong>实际运行时发生什么</strong>不会混淆。</p>
+
+  <h3>示例：HaikuEnsemble</h3>
+
+  <pre><code><span class="kw">class</span> <span class="cls">HaikuEnsemble</span>(dspy.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num_candidates=<span class="num">3</span>):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        self.writer = dspy.<span class="fn">ChainOfThought</span>(HaikuWriter)
+        self.judge = dspy.<span class="fn">ChainOfThought</span>(HaikuJudge)
+        self.num_candidates = num_candidates
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, location, mood, season):
+        candidates = []
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(self.num_candidates):
+            result = <span class="fn">self.writer</span>(
+                location=location, mood=mood, season=season, num_haikus=<span class="num">1</span>
+            )
+            candidates.<span class="fn">append</span>(result.haiku)
+
+        <span class="kw">with</span> dspy.<span class="fn">context</span>(lm=judge_lm):
+            best = <span class="fn">self.judge</span>(
+                location=location, mood=mood, season=season,
+                candidate_haikus=candidates
+            )
+        <span class="kw">return</span> dspy.<span class="fn">Prediction</span>(haiku=best.selected_haiku, reasoning=best.reasoning)</code></pre>
+
+  <div class="callout">
+    <span class="label">关键点</span>
+    <p><code>writer</code> 和 <code>judge</code> 是 <strong>Parameter</strong>（会被优化器发现）；<code>num_candidates</code> 是<strong>普通属性</strong>（不会被优化器搜索）；<code>forward</code> 里是<strong>纯 Python 逻辑</strong>，没有任何 DSPy 特有的“链式 API”。</p>
+  </div>
+
+  <h3>为什么分解模块？</h3>
+
+  <table>
+    <thead>
+      <tr><th>理由</th><th>核心原则</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>隔离上下文</td><td>关注点分离，避免无关信息污染</td></tr>
+      <tr><td>可复用组件</td><td>研究子模块可协助任何需要依据的程序</td></tr>
+      <tr><td>成本优化</td><td>简单工作路由到便宜模型，最终撰写用强模型</td></tr>
+      <tr><td>隔离变量</td><td>精确定位是哪个模块出了问题</td></tr>
+    </tbody>
+  </table>
+
+  <div class="principle">
+    <span class="label">核心洞察</span>
+    <p><strong>你写的不是提示词，你写的是 AI 程序的架构。</strong>签名定义接口，模块定义执行策略，<code>dspy.Module</code> 让你把这些组件组合成任意复杂的系统。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s6">
+  <h2>指标（Metrics）：定义“更好”</h2>
+  <p class="subtitle">优化器的方向感</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>所有优化器共享一个循环：“run your program many times, keep the version that scores best.”<strong>要让“更好”这个判断成立，你必须先定义什么叫“更好”。</strong>没有指标，优化器就是在黑暗中随机搜索。</p>
+  </div>
+
+  <h3>指标的契约</h3>
+
+  <pre><code><span class="kw">def</span> <span class="fn">my_metric</span>(example, prediction, trace=<span class="kw">None</span>):
+    <span class="kw">return</span> prediction.answer == example.answer</code></pre>
+
+  <p>DSPy 指标是<strong>鸭子类型</strong>的——没有基类要继承，没有装饰器要注册。任何可调用的对象，只要接收 <code>(gold, pred, ...)</code> 并返回一个分数，就是合法的指标。</p>
+
+  <h3>三种指标模式</h3>
+
+  <h4>模式一：标注数据对比</h4>
+  <pre><code><span class="kw">def</span> <span class="fn">exact_match</span>(example, prediction, trace=<span class="kw">None</span>):
+    <span class="kw">return</span> example.answer == prediction.answer</code></pre>
+
+  <h4>模式二：规则检查</h4>
+  <pre><code><span class="kw">def</span> <span class="fn">haiku_rule_metric</span>(example, prediction, trace=<span class="kw">None</span>):
+    score = <span class="num">0.0</span>
+    lines = prediction.haiku.<span class="fn">split</span>(<span class="str">"\n"</span>)
+    <span class="kw">if</span> <span class="fn">len</span>(lines) == <span class="num">3</span>:
+        score += <span class="num">0.3</span>
+    <span class="kw">if</span> prediction.season.<span class="fn">lower</span>() <span class="kw">in</span> prediction.haiku.<span class="fn">lower</span>():
+        score += <span class="num">0.4</span>
+    <span class="kw">if</span> prediction.mood.<span class="fn">lower</span>() <span class="kw">in</span> prediction.haiku.<span class="fn">lower</span>():
+        score += <span class="num">0.3</span>
+    <span class="kw">return</span> score</code></pre>
+
+  <h4>模式三：LLM-as-judge</h4>
+  <pre><code><span class="kw">class</span> <span class="cls">HaikuJudge</span>(dspy.Signature):
+    <span class="str">"""Rate how well the haiku evokes the given location, season, and mood."""</span>
+    location: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>()
+    season: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>()
+    mood: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>()
+    haiku: <span class="fn">str</span> = dspy.<span class="fn">InputField</span>()
+    score: <span class="fn">float</span> = dspy.<span class="fn">OutputField</span>(desc=<span class="str">"0.0 to 1.0"</span>)
+
+judge = dspy.<span class="fn">Predict</span>(HaikuJudge)</code></pre>
+
+  <h3>数据：dspy.Example 与 .with_inputs()</h3>
+
+  <pre><code>example = dspy.<span class="fn">Example</span>({
+    <span class="str">"location"</span>: <span class="str">"Bodega Bay"</span>,
+    <span class="str">"season"</span>: <span class="str">"autumn"</span>,
+    <span class="str">"mood"</span>: <span class="str">"mysterious"</span>,
+    <span class="str">"haiku"</span>: <span class="str">"..."</span>
+}).<span class="fn">with_inputs</span>(<span class="str">"location"</span>, <span class="str">"season"</span>, <span class="str">"mood"</span>)</code></pre>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p><code>.with_inputs()</code> 划定了<strong>程序能看到的</strong>和<strong>指标能看到的</strong>之间的边界。程序只看输入字段，指标可以看全部字段。这个分离防止了数据泄漏。</p>
+  </div>
+
+  <h3>运行基线评估</h3>
+
+  <pre><code>evaluator = dspy.<span class="fn">Evaluate</span>(
+    devset=dev_set,
+    metric=haiku_rule_metric,
+    num_threads=<span class="num">10</span>,
+    display_progress=<span class="kw">True</span>
+)
+
+results = <span class="fn">evaluator</span>(haiku_bot)
+<span class="fn">print</span>(results.score)</code></pre>
+
+  <div class="callout">
+    <span class="label">基线信号</span>
+    <p>官网实测：<code>dspy.ReAct</code> 俳句生成器在规则指标上只得了 <strong>30%</strong>。模型不知道你关心音节数、季节词的逐字出现。<strong>30% 的基线，恰恰证明了指标的区分度。</strong></p>
+  </div>
+
+  <h3>高级设计：trace 与 feedback</h3>
+
+  <p><strong><code>trace</code></strong>：优化时会被填充，让指标看到程序是怎么到达这个答案的。评估时返回连续分数，优化时返回二值化信号。</p>
+
+  <p><strong><code>feedback</code></strong>：指标可以返回 <code>dspy.Prediction(score, feedback)</code>。<code>score</code> 被 <code>Evaluate</code> 平均，<code>feedback</code> 被 GEPA 的反思循环读取。</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>分数是<strong>标量信号</strong>，反馈是<strong>自然语言信号</strong>。GEPA 不只用分数来搜索，还用“为什么这个答案不好”的文本解释来指导搜索方向。这让优化从“盲搜”变成了“有指导的搜索”。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s7">
+  <h2>GEPA 优化：让程序自己写提示词</h2>
+  <p class="subtitle">反思驱动的进化</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>手工调优的搜索空间是无限的，而人类的试错能力是有限的。<strong>优化器的任务，就是用自动化的方式在这个无限空间中进行有方向的搜索。</strong></p>
+  </div>
+
+  <h3>配置优化器</h3>
+
+  <pre><code>optimizer = dspy.<span class="fn">GEPA</span>(
+    metric=haiku_metric,
+    reflection_lm=dspy.<span class="fn">LM</span>(<span class="str">"openai/gpt-5.4"</span>, temperature=<span class="num">1.0</span>),
+    auto=<span class="str">"light"</span>,
+    num_threads=<span class="num">2</span>
+)
+optimized_haiku_bot = optimizer.<span class="fn">compile</span>(haiku_bot, trainset=train, valset=val)</code></pre>
+
+  <table>
+    <thead>
+      <tr><th>配置项</th><th>设计决策</th><th>第一性原理</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>reflection_lm</code></td>
+        <td>反思模型与任务模型分离</td>
+        <td>关注点分离：执行要便宜快速，反思要强大</td>
+      </tr>
+      <tr>
+        <td><code>auto</code></td>
+        <td>预算的预设</td>
+        <td>在探索与成本之间做权衡</td>
+      </tr>
+      <tr>
+        <td><code>trainset / valset</code></td>
+        <td>训练/验证分离</td>
+        <td>防止过拟合</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>GEPA 的内部循环</h3>
+
+  <p>GEPA 的执行循环：</p>
+  <ol>
+    <li>用学生 LM 在训练样本上执行程序，用指标打分。</li>
+    <li>将样本和指标结果发送给反思 LM，由它提出新指令。</li>
+    <li>用新指令再次运行程序，再次打分，保留得分最好的候选。</li>
+    <li>循环重复，直到预算耗尽。</li>
+  </ol>
+
+  <div class="callout key">
+    <span class="label">Pareto 前沿采样</span>
+    <p>GEPA 维护了<strong>每个样本上的最佳表现者</strong>。如果候选 A 在“秋季俳句”上最好，候选 B 在“夏季俳句”上最好，两者都会留在 Pareto 前沿上，都有机会被选中进行变异。这避免了“为了提升平均分而牺牲特定场景”的陷阱。</p>
+  </div>
+
+  <h3>逐预测器反思</h3>
+
+  <p>GEPA 的反思是<strong>逐预测器</strong>进行的。对于每个需要更新的预测器，GEPA 会调用指标两次——一次在模块级别获取聚合分数，一次在预测器级别获取该步骤的孤立评分。这样，反思模型可以看到“是哪个子模块出了问题”。</p>
+
+  <h3>结果：小模型超越大模型</h3>
+
+  <div class="callout key">
+    <span class="label">实测结果</span>
+    <p><strong>gpt-5.4-nano（小模型）+ GEPA 优化 = 90.1%</strong><br>
+    <strong>gpt-5.4（大模型）未优化 = 82.4%</strong></p>
+    <p>小模型经过优化后，不仅超过了自身基线（78.1% → 90.1%），还超过了未优化的大模型。</p>
+  </div>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>大模型的优势在于“通用能力”，但提示词优化带来的“任务特定能力”可以弥补甚至超过这个差距。<strong>同一个程序、同一个指标、同一组数据，在不同的任务模型上会收敛到不同的最优提示词。</strong></p>
+  </div>
+
+  <h3>GEPA 在优化器谱系中的位置</h3>
+
+  <table>
+    <thead>
+      <tr><th>维度</th><th>GEPA</th><th>传统优化器（如 MIPROv2）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>搜索信号</td><td>分数 + 文本反馈</td><td>仅分数</td></tr>
+      <tr><td>选择策略</td><td>Pareto 前沿 + 聚合分数</td><td>聚合分数</td></tr>
+      <tr><td>反思粒度</td><td>逐预测器</td><td>无反思</td></tr>
+      <tr><td>模型配置</td><td>任务模型与反思模型分离</td><td>单一模型</td></tr>
+      <tr><td>核心机制</td><td>遗传算法 + 反思 + Pareto</td><td>贝叶斯优化</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s8">
+  <h2>保存与加载：把优化成果变成资产</h2>
+  <p class="subtitle">程序 = 结构 + 状态</p>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>经过 GEPA 优化后，程序有了两样东西：<strong>结构</strong>（你写的 Python 类定义）和<strong>状态</strong>（优化器学到的成果）。这两样东西的生命周期不同——结构走 Git，状态需要独立保存和传递。</p>
+  </div>
+
+  <h3>两种保存模式</h3>
+
+  <h4>状态模式（JSON）——你通常需要的</h4>
+  <pre><code>optimized_haiku_bot.<span class="fn">save</span>(<span class="str">"optimized_haiku_bot.json"</span>)</code></pre>
+
+  <p>加载时先实例化程序，再调用 <code>.load()</code>：</p>
+  <pre><code>haiku_bot = dspy.<span class="fn">ReAct</span>(HaikuBot, tools=[...])
+haiku_bot.<span class="fn">load</span>(<span class="str">"optimized_haiku_bot.json"</span>)</code></pre>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>状态是<strong>数据</strong>，不是代码。JSON 文件里装的是优化后的指令文本和示例列表。<strong>你加载的 JSON 文件里没有可执行代码</strong>——结构来自代码库，状态来自 JSON，两者分离，互不污染。</p>
+  </div>
+
+  <h4>整包模式（Pickle）——跨团队交付</h4>
+  <pre><code>optimized_haiku_bot.<span class="fn">save</span>(<span class="str">"optimized_haiku_bot/"</span>, save_program=<span class="kw">True</span>)
+
+<span class="cm"># 加载时只需一行</span>
+haiku_bot = dspy.<span class="fn">load</span>(<span class="str">"optimized_haiku_bot/"</span>)</code></pre>
+
+  <div class="callout warn">
+    <span class="label">安全警告</span>
+    <p>整包模式的目录包含可执行 Python，<strong>只从你信任的来源加载程序</strong>。这是便利性与安全性的权衡。</p>
+  </div>
+
+  <h3>状态文件里有什么，没有什么</h3>
+
+  <table>
+    <thead>
+      <tr><th>包含</th><th>不包含</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>优化后的指令</td><td>API keys</td></tr>
+      <tr><td>筛选出的 demos</td><td>Provider 选择</td></tr>
+      <tr><td>签名元数据</td><td>Temperature 等参数</td></tr>
+    </tbody>
+  </table>
+
+  <div class="principle">
+    <span class="label">第一性原理</span>
+    <p>状态是“程序学到了什么”——<strong>模型无关的</strong>。配置是“用哪个模型、什么参数”——<strong>环境相关的</strong>。这个分离让<strong>一次优化，多处部署</strong>成为可能。</p>
+  </div>
+
+  <pre><code>haiku_bot.<span class="fn">load</span>(<span class="str">"optimized_haiku_bot.json"</span>)
+
+lm = dspy.<span class="fn">LM</span>(<span class="str">"openai/gpt-5.4"</span>)
+dspy.<span class="fn">configure</span>(lm=lm)
+
+<span class="cm"># 或者换一个模型</span>
+lm_qwen = dspy.<span class="fn">LM</span>(<span class="str">"qwen/qwen3-32b"</span>)
+<span class="kw">with</span> dspy.<span class="fn">context</span>(lm=lm_qwen):
+    result = <span class="fn">haiku_bot</span>(location=<span class="str">"Bodega Bay"</span>, mood=<span class="str">"mysterious"</span>, season=<span class="str">"autumn"</span>)</code></pre>
+
+  <div class="callout key">
+    <span class="label">核心洞察</span>
+    <p><strong>你保存的不是代码，是程序学到的知识。</strong>代码定义程序能做什么，状态定义程序知道怎么做。两者分离，各自用最适合的方式管理。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s9">
+  <h2>全景总结：DSPy 工作流的六个阶段</h2>
+  <p class="subtitle">从写提示词到管理优化成果</p>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>阶段</th><th>核心概念</th><th>第一性原理</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>签名</strong></td>
+        <td><code>Predict</code> + <code>"in -&gt; out"</code></td>
+        <td>接口隔离：声明 what，不写 how</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>类签名</strong></td>
+        <td>Docstring、字段类型、<code>desc</code></td>
+        <td>信息分层：可优化的 vs 不可变的</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>更换模块</strong></td>
+        <td><code>ChainOfThought</code></td>
+        <td>装饰器模式：签名保持纯净，策略运行时扩展</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>工具与 ReAct</strong></td>
+        <td>普通 Python 函数 + 循环</td>
+        <td>开放系统：从“想”到“做”</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>组合模块</strong></td>
+        <td><code>dspy.Module</code> 嵌套</td>
+        <td>可组合积木：分解、复用、治理、优化</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>指标与优化</strong></td>
+        <td><code>metric</code> → GEPA</td>
+        <td>定义方向，自动搜索</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>保存与加载</strong></td>
+        <td><code>.save()</code> / <code>.load()</code></td>
+        <td>结构 vs 状态分离</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="principle">
+    <span class="label">终极心法</span>
+    <p><strong>你写的不是提示词，你写的是一个可以用程序方式编译和优化的 LLM 应用。</strong></p>
+    <p>签名定义每个组件的接口，模块定义执行策略，<code>dspy.Module</code> 让你把这些组件组合成任意复杂的系统，指标定义“更好”，优化器自动搜索最优配置，保存让成果成为可复用的资产。</p>
+  </div>
+
+  <h3>最佳实践清单</h3>
+  <ol>
+    <li><strong>先基线，再评估，再优化。</strong>不要一上来就调 GEPA。</li>
+    <li><strong>字段名要反复斟酌。</strong>优化器不会碰它，但它是模型理解任务的关键线索。</li>
+    <li><strong>Docstring 写意图，不写操作手册。</strong>具体步骤留给模块和优化器。</li>
+    <li><strong>分解复杂程序。</strong>隔离上下文、复用组件、路由模型、定位问题。</li>
+    <li><strong>指标要有区分度。</strong>30% 的基线比 95% 的基线更能暴露问题。</li>
+    <li><strong>用独立测试集做最终评估。</strong>优化用 valset，生产判断用 testset。</li>
+    <li><strong>多试优化器。</strong>GEPA 最强但最贵，SIMBA、MIPROv2 各有适用场景。</li>
+    <li><strong>状态用 JSON，交付用 Pickle。</strong>安全与便利，按场景选择。</li>
+  </ol>
+</section>
+
+<footer>
+  <p>DSPy 学习笔记 · 从第一性原理到完整工作流</p>
+  <p style="margin-top:8px;">基于 DSPy 官方 Getting Started 教程与《Building LLM Applications with DSPy》整理</p>
+</footer>
+
+</div>
+</body>
+</html>
