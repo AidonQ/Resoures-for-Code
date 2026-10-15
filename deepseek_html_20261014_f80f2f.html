@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSPy 一周学习计划 · BA 的 Vibe Coding 指南</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #171a23;
+    --surface2: #1e2230;
+    --border: #2a2f3e;
+    --text: #e4e6eb;
+    --text-dim: #9aa0ae;
+    --accent: #6ea8fe;
+    --accent2: #a78bfa;
+    --green: #4ade80;
+    --orange: #fb923c;
+    --red: #f87171;
+    --code-bg: #12141c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+
+  header .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 3px 12px;
+    margin-bottom: 20px;
+    opacity: 0.85;
+  }
+
+  header h1 {
+    font-size: 2.3em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e4e6eb 0%, #6ea8fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--text-dim);
+    font-size: 1.05em;
+    max-width: 680px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 64px;
+  }
+
+  .toc h2 {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc li {
+    counter-increment: toc;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc li:last-child { border-bottom: none; }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    transition: color 0.15s;
+  }
+
+  .toc a:hover { color: var(--accent); }
+
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-size: 0.8em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    min-width: 28px;
+  }
+
+  /* ── Sections ── */
+  section {
+    margin-bottom: 80px;
+    scroll-margin-top: 24px;
+  }
+
+  section > h2 {
+    font-size: 1.7em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+    position: relative;
+  }
+
+  section > h2::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 64px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  section > .subtitle {
+    color: var(--text-dim);
+    font-size: 0.95em;
+    margin-bottom: 32px;
+    margin-top: 12px;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    font-weight: 650;
+    margin: 40px 0 16px;
+    color: var(--accent);
+  }
+
+  h4 {
+    font-size: 1.02em;
+    font-weight: 600;
+    margin: 28px 0 12px;
+    color: var(--text);
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  strong { color: #fff; font-weight: 650; }
+
+  em { color: var(--accent2); font-style: normal; }
+
+  /* ── Code ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-size: 0.88em;
+    line-height: 1.65;
+  }
+
+  code {
+    font-family: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+  }
+
+  p code, li code, td code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--accent);
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.92em;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.88em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: var(--surface); }
+
+  /* ── Callouts ── */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 24px;
+    margin: 24px 0;
+    font-size: 0.95em;
+  }
+
+  .callout.warn { border-left-color: var(--orange); }
+  .callout.key { border-left-color: var(--green); }
+  .callout.danger { border-left-color: var(--red); }
+
+  .callout .label {
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .callout.warn .label { color: var(--orange); }
+  .callout.key .label { color: var(--green); }
+  .callout.danger .label { color: var(--red); }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── Principle box ── */
+  .principle {
+    background: linear-gradient(135deg, rgba(110,168,254,0.08), rgba(167,139,250,0.08));
+    border: 1px solid rgba(110,168,254,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .principle .label {
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--accent2);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .principle p:last-child { margin-bottom: 0; }
+
+  /* ── Day card ── */
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 32px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .day-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+
+  .day-card .day-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .day-card .day-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0f1117;
+    font-weight: 800;
+    font-size: 1.1em;
+    flex-shrink: 0;
+  }
+
+  .day-card .day-title {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+
+  .day-card h4 {
+    margin-top: 20px;
+    color: var(--accent);
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .day-card ul, .day-card ol {
+    margin: 12px 0 12px 24px;
+  }
+
+  .day-card li {
+    margin-bottom: 6px;
+  }
+
+  /* ── Lists ── */
+  ul, ol {
+    margin: 16px 0 16px 24px;
+  }
+
+  li {
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  li::marker { color: var(--accent); }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.88em;
+    text-align: center;
+  }
+
+  /* ── Flow diagram ── */
+  .flow {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    line-height: 2;
+    color: var(--text-dim);
+    overflow-x: auto;
+  }
+
+  .flow .highlight { color: var(--accent); font-weight: 600; }
+  .flow .arrow { color: var(--accent2); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.7em; }
+    section > h2 { font-size: 1.35em; }
+    pre { padding: 16px; font-size: 0.82em; }
+    .container { padding: 0 16px 80px; }
+    .toc { padding: 20px; }
+    table { font-size: 0.82em; }
+    th, td { padding: 9px 11px; }
+    .day-card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge">BA · Vibe Coding · 一周计划</div>
+  <h1>DSPy 一周学习计划</h1>
+  <p>从第一性原理出发，用一周时间建立 DSPy 架构直觉：知道功能边界、能画架构、能定指标、能看中间结果、能指挥 agent 写代码并纠错。目标不是背 API，而是“得意忘形”。</p>
+</header>
+
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s0">一周后你要达到的能力标准</a></li>
+    <li><a href="#s1">核心学习原则</a></li>
+    <li><a href="#s2">七天学习路径</a></li>
+    <li><a href="#s3">DSPy 架构画布</a></li>
+    <li><a href="#s4">中间结果阅读清单</a></li>
+    <li><a href="#s5">纠错检查表</a></li>
+    <li><a href="#s6">与 Agent 协作的提示词模板</a></li>
+    <li><a href="#s7">人机分工：你需要手动做什么</a></li>
+    <li><a href="#s8">推荐工作流</a></li>
+    <li><a href="#s9">最终“得意忘形”检验</a></li>
+  </ol>
+</nav>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s0">
+  <h2>一周后你要达到的能力标准</h2>
+  <p class="subtitle">你不需要成为 DSPy 工程师，而要成为 DSPy 架构师 + 验收者 + 纠错者</p>
+
+  <div class="principle">
+    <span class="label">核心定位</span>
+    <p>你的核心能力不是背 API，而是：<strong>知道 DSPy 的功能边界，能画出架构，能定义签名和指标，能指挥 agent 写代码，能看懂中间结果并纠错。</strong>这就是“得意忘形”——忘掉具体 API 细节，留下第一性原理和架构判断力。</p>
+  </div>
+
+  <ol>
+    <li><strong>能画架构画布</strong>：任务 → 签名 → 模块 → 工具 → 数据 → 指标 → 优化器 → 保存。</li>
+    <li><strong>能定义签名</strong>：输入输出字段、类签名、docstring、字段类型、<code>Literal</code>、<code>desc</code>。</li>
+    <li><strong>能选模块</strong>：<code>Predict</code>、<code>ChainOfThought</code>、<code>ReAct</code>、自定义 <code>dspy.Module</code>。</li>
+    <li><strong>能定指标</strong>：<code>dspy.Example</code>、<code>.with_inputs()</code>、<code>Evaluate</code>、<code>metric</code>、<code>trace</code>、<code>feedback</code>。</li>
+    <li><strong>能选优化器</strong>：<code>BootstrapFewShot</code>、<code>MIPROv2</code>、<code>GEPA</code>，知道成本与适用场景。</li>
+    <li><strong>能看中间结果</strong>：<code>lm.inspect_history()</code>、<code>result.trajectory</code>、<code>Evaluate.results</code>、<code>get_lm_usage()</code>、保存后的 JSON。</li>
+    <li><strong>能纠错</strong>：定位是签名、模块、指标、数据、优化器还是 LM 配置的问题。</li>
+    <li><strong>能指挥 agent</strong>：给架构画布和约束，让 agent 生成代码，你审查并迭代。</li>
+  </ol>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s1">
+  <h2>核心学习原则</h2>
+  <p class="subtitle">一周学习的方向盘</p>
+
+  <div class="callout key">
+    <span class="label">五条原则</span>
+    <p><strong>第一性原理驱动</strong>：每天先问“这个组件解决什么根本问题”，再看 API。</p>
+    <p><strong>项目驱动</strong>：一周只做一个端到端项目，不要碎片化。</p>
+    <p><strong>中间结果优先</strong>：每跑一步，必须看提示词、轨迹、逐条评估结果。</p>
+    <p><strong>agent 协作</strong>：你写架构和验收标准，agent 写代码；你负责纠错。</p>
+    <p><strong>得意忘形</strong>：不背 API，记住模式——签名声明 what，模块定义 how，指标定义 better，优化器自动搜索。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s2">
+  <h2>七天学习路径</h2>
+  <p class="subtitle">每天 3–5 小时，周末 5–6 小时</p>
+
+  <!-- Day 1 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">1</div>
+      <h3 class="day-title">建立第一性原理与最小闭环</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>LLM 应用为什么是一个函数？DSPy 如何把提示词变成程序？</p>
+
+    <h4>学什么</h4>
+    <ul>
+      <li>官网 Getting Started 的 first program。</li>
+      <li>第一性原理：签名 = 函数声明；模块 = 执行策略。</li>
+      <li>最小代码：<code>dspy.LM</code>、<code>dspy.configure</code>、<code>dspy.Predict</code>、<code>inspect_history</code>。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>跑通 <code>dspy.Predict("question -&gt; answer")</code>。</li>
+      <li>打印 <code>lm.inspect_history(n=1)</code>，看 DSPy 自动生成的提示词。</li>
+      <li>改字段名，观察提示词和输出变化。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>一页笔记：DSPy 四行代码背后发生了什么。</p>
+
+    <h4>检验</h4>
+    <p>你能解释“为什么没写提示词，DSPy 却生成了提示词”。</p>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">2</div>
+      <h3 class="day-title">签名深入与模块选择</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>字符串签名不够时，类签名如何信息分层？</p>
+
+    <h4>学什么</h4>
+    <ul>
+      <li>类签名：docstring、字段类型、<code>Literal</code>、<code>desc</code>。</li>
+      <li>模块：<code>Predict</code> vs <code>ChainOfThought</code>。</li>
+      <li>关键原则：指令在签名上，不在模块上；优化器改 docstring，不碰字段名和 desc。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>把 Day 1 的字符串签名升级为类签名。</li>
+      <li>加 <code>Literal</code> 约束和 <code>desc</code>。</li>
+      <li>换 <code>ChainOfThought</code>，看 <code>reasoning</code> 字段。</li>
+      <li>让 agent 生成代码，你只审查签名设计。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>一个类签名 + 两个模块对比结果。</p>
+
+    <h4>检验</h4>
+    <p>你能说出哪些信息可被优化器改，哪些是你必须精确控制的锚点。</p>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">3</div>
+      <h3 class="day-title">组合模块、工具与 ReAct</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>如何从“单步生成”走向“多步闭环”？</p>
+
+    <h4>学什么</h4>
+    <ul>
+      <li>自定义 <code>dspy.Module</code>：<code>__init__</code> + <code>forward</code>。</li>
+      <li>工具：普通 Python 函数 + 类型提示 + docstring。</li>
+      <li><code>dspy.ReAct</code>：推理-行动循环，<code>finish</code>，<code>trajectory</code>。</li>
+      <li><code>dspy.context()</code> 做模型路由。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>构建一个自定义 Module：两个子模块串联。</li>
+      <li>加一个工具，用 <code>ReAct</code> 调用。</li>
+      <li>打印 <code>result.trajectory</code>，看每一步 thought、tool、observation。</li>
+      <li>让 agent 生成 RAG 或客服 agent 骨架，你检查 <code>forward</code> 数据流。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>一张架构图：输入 → 子模块 → 工具 → 输出。</p>
+
+    <h4>检验</h4>
+    <p>你能从 trajectory 判断模型为什么调用了错误的工具。</p>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">4</div>
+      <h3 class="day-title">指标与评估——定义“更好”</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>没有指标，优化器就是盲搜。</p>
+
+    <h4>学什么</h4>
+    <ul>
+      <li><code>dspy.Example</code>、<code>.with_inputs()</code>。</li>
+      <li><code>metric(example, prediction, trace=None)</code>。</li>
+      <li><code>dspy.Evaluate</code>、<code>num_threads</code>、<code>display_table</code>。</li>
+      <li><code>trace</code> 和 <code>feedback</code> 的作用。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>准备 20–50 条业务数据，转成 <code>Example</code>。</li>
+      <li>写一个业务指标：分类准确率、规则检查或 LLM-as-judge。</li>
+      <li>跑基线 <code>Evaluate</code>，看逐条失败案例。</li>
+      <li>让 agent 插入调试语句，打印 <code>results.results</code>。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>基线分数 + 失败案例清单。</p>
+
+    <h4>检验</h4>
+    <p>你能判断指标是否有区分度，是否数据泄漏。</p>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">5</div>
+      <h3 class="day-title">优化器与 GEPA</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>如何让程序自动写更好的提示词？</p>
+
+    <h4>学什么</h4>
+    <ul>
+      <li><code>LabeledFewShot</code>、<code>BootstrapFewShot</code>、<code>MIPROv2</code>、<code>GEPA</code>。</li>
+      <li>GEPA 的 <code>reflection_lm</code>、<code>auto</code>、<code>trainset/valset</code>、<code>feedback</code>、Pareto。</li>
+      <li>保存与加载：JSON 状态 vs Pickle 整包。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>用 <code>BootstrapFewShot</code> 跑一次优化。</li>
+      <li>用 <code>MIPROv2</code> 或 <code>GEPA</code> 跑一次，比较分数和成本。</li>
+      <li>保存优化后 JSON，检查里面指令和 demos 的变化。</li>
+      <li>换一个 LM 加载同一 JSON，验证“一次优化，多处部署”。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>优化前后分数对比 + 保存的 JSON 文件。</p>
+
+    <h4>检验</h4>
+    <p>你能解释 GEPA 为什么需要反馈，以及为什么反思模型和任务模型要分开。</p>
+  </div>
+
+  <!-- Day 6 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">6</div>
+      <h3 class="day-title">端到端项目实战（指挥 agent）</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>如何把签名、模块、工具、指标、优化器组合成一个完整程序？</p>
+
+    <h4>选一个 BA 场景</h4>
+    <ul>
+      <li>客服意图分类 + RAG 回答；</li>
+      <li>合同实体提取 + 风险评估；</li>
+      <li>用户反馈分类 + 摘要。</li>
+    </ul>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>写“架构画布”（见后文）。</li>
+      <li>让 agent 按画布生成代码，要求插入调试语句。</li>
+      <li>你审查：签名命名、字段类型、模块选择、指标函数、数据划分、优化器预算。</li>
+      <li>跑基线 → 看中间结果 → 纠错 → 优化 → 保存。</li>
+      <li>记录每次纠错的原因和修改。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>一个可运行的端到端 DSPy 项目 + 纠错日志。</p>
+
+    <h4>检验</h4>
+    <p>你能不看代码细节，只看中间结果就定位问题。</p>
+  </div>
+
+  <!-- Day 7 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-num">7</div>
+      <h3 class="day-title">复盘与“得意忘形”</h3>
+    </div>
+
+    <p><strong>核心问题：</strong>如何把 DSPy 变成你的架构直觉？</p>
+
+    <h4>做什么</h4>
+    <ol>
+      <li>复盘 Day 1–6，整理“DSPy 架构画布”和“纠错检查表”。</li>
+      <li>拿一个全新业务需求，30 分钟内画出 DSPy 架构。</li>
+      <li>让 agent 生成代码，你只做审查和验收。</li>
+      <li>总结哪些 API 你根本不用记，哪些第一性原理必须记住。</li>
+    </ol>
+
+    <h4>产出</h4>
+    <p>一页“DSPy 架构与纠错手册”。</p>
+
+    <h4>检验</h4>
+    <p>给你新需求，你能在 30 分钟内给出签名、模块、指标、优化器方案，并知道看哪里纠错。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s3">
+  <h2>DSPy 架构画布</h2>
+  <p class="subtitle">每天用，也是你指挥 agent 的输入</p>
+
+  <table>
+    <thead>
+      <tr><th>模块</th><th>你要回答的问题</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>任务</strong></td><td>业务目标是什么？成功标准是什么？</td></tr>
+      <tr><td><strong>签名</strong></td><td>输入字段？输出字段？字段名是否自解释？</td></tr>
+      <tr><td><strong>模块</strong></td><td><code>Predict</code>、<code>ChainOfThought</code>、<code>ReAct</code> 还是自定义 Module？</td></tr>
+      <tr><td><strong>工具</strong></td><td>需要查数据库、搜索、计算吗？</td></tr>
+      <tr><td><strong>数据</strong></td><td>训练/验证/测试怎么分？<code>with_inputs</code> 划哪些？</td></tr>
+      <tr><td><strong>指标</strong></td><td>准确率、规则、LLM-judge？有反馈吗？</td></tr>
+      <tr><td><strong>优化器</strong></td><td>先 <code>BootstrapFewShot</code> 还是直接 <code>GEPA</code>？预算多少？</td></tr>
+      <tr><td><strong>保存</strong></td><td>JSON 状态还是 Pickle 整包？部署到哪个 LM？</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s4">
+  <h2>中间结果阅读清单</h2>
+  <p class="subtitle">纠错的核心——你必须亲自看这些</p>
+
+  <table>
+    <thead>
+      <tr><th>中间结果</th><th>看什么</th><th>能发现什么问题</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>lm.inspect_history()</code></td>
+        <td>实际提示词</td>
+        <td>签名命名、docstring、字段格式</td>
+      </tr>
+      <tr>
+        <td><code>result.trajectory</code></td>
+        <td>ReAct 每步 thought/tool/observation</td>
+        <td>工具选择错误、循环过多</td>
+      </tr>
+      <tr>
+        <td><code>Evaluate.results</code></td>
+        <td>逐条预测与分数</td>
+        <td>指标是否合理、失败模式</td>
+      </tr>
+      <tr>
+        <td><code>prediction.get_lm_usage()</code></td>
+        <td>token 和成本</td>
+        <td>是否太贵、是否缓存失效</td>
+      </tr>
+      <tr>
+        <td>保存的 JSON</td>
+        <td>优化后的指令和 demos</td>
+        <td>优化器改了什么、是否过拟合</td>
+      </tr>
+      <tr>
+        <td><code>print(prog.named_predictors())</code></td>
+        <td>子模块树</td>
+        <td>优化器是否能看到所有子模块</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s5">
+  <h2>纠错检查表</h2>
+  <p class="subtitle">分数低时按顺序问</p>
+
+  <ol>
+    <li><strong>签名</strong>：字段名是否自解释？docstring 是否只写意图？</li>
+    <li><strong>类型</strong>：该用 <code>Literal</code> 吗？该用 <code>bool</code>、<code>float</code> 吗？</li>
+    <li><strong>模块</strong>：单步够吗？需要 <code>ChainOfThought</code> 吗？需要工具吗？</li>
+    <li><strong>指标</strong>：有区分度吗？是否只看最终答案？需要 <code>feedback</code> 吗？</li>
+    <li><strong>数据</strong>：<code>.with_inputs()</code> 是否泄漏答案？训练/验证是否分开？</li>
+    <li><strong>优化器</strong>：预算够吗？<code>trainset</code> 和 <code>valset</code> 是否混用？</li>
+    <li><strong>LM 配置</strong>：任务模型和反思模型是否分开？温度是否合理？</li>
+    <li><strong>缓存</strong>：是否因为缓存导致重复采样无效？</li>
+    <li><strong>保存</strong>：加载 JSON 后是否重新配置了 LM？</li>
+  </ol>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s6">
+  <h2>与 Agent 协作的提示词模板</h2>
+  <p class="subtitle">让 agent 生成 DSPy 代码时，你用这个模板</p>
+
+  <pre><code>你是 DSPy 代码生成器。请按以下架构画布生成代码：
+- 任务：
+- 签名：输入字段、输出字段、字段类型、docstring
+- 模块：选择 Predict / ChainOfThought / ReAct / 自定义 Module
+- 工具：列出函数名、参数、docstring
+- 数据：train/val/test 划分，with_inputs 字段
+- 指标：函数签名和逻辑
+- 优化器：类型、预算、trainset/valset
+- 保存：路径和模式
+
+要求：
+1. 先输出架构图，再输出代码。
+2. 插入调试语句：inspect_history、trajectory、Evaluate.results、get_lm_usage。
+3. 每个模块加注释说明第一性原理。
+4. 给出运行命令和预期中间结果。</code></pre>
+
+  <div class="callout">
+    <span class="label">工作方式</span>
+    <p>你审查架构图，不审查每一行代码。代码跑不通，让 agent 根据中间结果修。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s7">
+  <h2>人机分工：你需要手动做什么</h2>
+  <p class="subtitle">你不需要手动打字，但你需要手动做架构判断、验收和纠错</p>
+
+  <div class="principle">
+    <span class="label">核心结论</span>
+    <p><strong>你不需要手动在 Python 文件里大量打字。但你需要手动做架构判断、验收和纠错。</strong>AI/agent 可以当你的“手”，替你写代码、运行、看日志、改代码。但你不能把“脑”和“眼”也交出去——否则你无法纠错，也无法得意忘形。</p>
+  </div>
+
+  <h3>人机分工表</h3>
+
+  <table>
+    <thead>
+      <tr><th>角色</th><th>你（BA/架构师）</th><th>AI/Agent（编码代理）</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>任务定义</strong></td>
+        <td>写业务目标、成功标准</td>
+        <td>无</td>
+      </tr>
+      <tr>
+        <td><strong>签名设计</strong></td>
+        <td>定输入输出字段名、类型、docstring 意图</td>
+        <td>生成类签名代码</td>
+      </tr>
+      <tr>
+        <td><strong>模块选择</strong></td>
+        <td>决定用 <code>Predict</code> / <code>ChainOfThought</code> / <code>ReAct</code> / 自定义 Module</td>
+        <td>写模块代码</td>
+      </tr>
+      <tr>
+        <td><strong>工具定义</strong></td>
+        <td>说清工具名、参数、返回值</td>
+        <td>写 Python 函数</td>
+      </tr>
+      <tr>
+        <td><strong>数据划分</strong></td>
+        <td>决定 train/val/test，确认 <code>.with_inputs()</code> 不泄漏</td>
+        <td>写数据加载代码</td>
+      </tr>
+      <tr>
+        <td><strong>指标</strong></td>
+        <td>用自然语言描述“什么叫好”</td>
+        <td>写 metric 函数</td>
+      </tr>
+      <tr>
+        <td><strong>优化器</strong></td>
+        <td>选类型、预算、trainset/valset</td>
+        <td>写 compile 调用</td>
+      </tr>
+      <tr>
+        <td><strong>运行</strong></td>
+        <td>说“跑基线”</td>
+        <td>执行代码，返回中间结果</td>
+      </tr>
+      <tr>
+        <td><strong>看中间结果</strong></td>
+        <td><strong>你亲自看</strong>：<code>inspect_history</code>、<code>trajectory</code>、<code>Evaluate.results</code></td>
+        <td>可帮你提取和格式化</td>
+      </tr>
+      <tr>
+        <td><strong>纠错</strong></td>
+        <td><strong>你判断</strong>：签名问题？指标问题？模块问题？</td>
+        <td>按你的判断改代码</td>
+      </tr>
+      <tr>
+        <td><strong>保存/部署</strong></td>
+        <td>决定 JSON 还是 Pickle，部署到哪个 LM</td>
+        <td>写 save/load 代码</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>为什么不能完全“让 AI 做事情”？</h3>
+
+  <div class="callout warn">
+    <span class="label">原因</span>
+    <p>因为 <strong>vibe coding 的瓶颈不是打字，是判断</strong>。</p>
+    <ul style="margin-top:12px;">
+      <li>AI 可以写代码，但它不知道你的业务里“什么算对”。</li>
+      <li>AI 可以跑优化器，但它不知道指标有没有区分度、数据有没有泄漏。</li>
+      <li>AI 可以看 <code>trajectory</code>，但它不一定能判断“模型为什么调错工具”。</li>
+      <li>AI 可以改代码，但它可能把签名字段名改坏——而优化器不碰字段名，坏名字会永久拖累性能。</li>
+    </ul>
+    <p style="margin-top:12px;"><strong>你一周后要能看懂中间结果，才能指挥 AI 修。</strong>如果你完全不做分析、不看结果，AI 改了三轮，你也不知道它是不是在瞎改。</p>
+  </div>
+
+  <h3>你手动打字的唯一必要场景</h3>
+  <ol>
+    <li>改字段名和 <code>desc</code>——因为优化器不碰它们，AI 起名可能不准。</li>
+    <li>用自然语言精确描述指标逻辑——AI 写代码，但逻辑必须你把关。</li>
+    <li>记录纠错日志——这是你一周后“得意忘形”的资产。</li>
+  </ol>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s8">
+  <h2>推荐工作流</h2>
+  <p class="subtitle">你指挥，AI 执行，你验收</p>
+
+  <div class="flow">
+    <span class="highlight">你写自然语言架构画布</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="highlight">AI 生成 prog.py + run.py</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="highlight">Agent 运行，返回：</span><br>
+    &nbsp;&nbsp;• lm.inspect_history()<br>
+    &nbsp;&nbsp;• Evaluate.results 前 10 条<br>
+    &nbsp;&nbsp;• result.trajectory<br>
+    &nbsp;&nbsp;• get_lm_usage()<br>
+    <span class="arrow">↓</span><br>
+    <span class="highlight">你看中间结果，判断问题：</span><br>
+    &nbsp;&nbsp;• 字段名不好？→ 让 AI 改签名<br>
+    &nbsp;&nbsp;• 指标太松？→ 让 AI 改 metric<br>
+    &nbsp;&nbsp;• 模块不够？→ 让 AI 换 ChainOfThought<br>
+    &nbsp;&nbsp;• 数据泄漏？→ 让 AI 改 .with_inputs()<br>
+    <span class="arrow">↓</span><br>
+    <span class="highlight">AI 修改，再跑</span><br>
+    <span class="arrow">↓</span><br>
+    <span class="highlight">你验收：分数、成本、稳定性</span>
+  </div>
+
+  <h3>一周里具体怎么操作</h3>
+
+  <ul>
+    <li><strong>Day 1–2</strong>：让 AI 生成最小代码，你只改字段名，看 <code>inspect_history</code>。</li>
+    <li><strong>Day 3–4</strong>：你画架构图，AI 写自定义 Module 和 ReAct，你只看 <code>trajectory</code> 和 <code>Evaluate.results</code>。</li>
+    <li><strong>Day 5</strong>：你选优化器和预算，AI 跑，你看保存的 JSON 里指令和 demos 变了什么。</li>
+    <li><strong>Day 6</strong>：端到端项目，你只写架构画布和验收标准，AI 写全部代码并运行，你纠错。</li>
+    <li><strong>Day 7</strong>：拿新需求，你 30 分钟画架构，AI 生成，你验收。</li>
+  </ul>
+
+  <div class="callout key">
+    <span class="label">工具建议</span>
+    <p>用 Jupyter/Colab，让 AI 直接生成并执行单元格。你用 Cursor、Claude Code、Codex 这类能跑代码的 agent，你负责看输出。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ -->
+<section id="s9">
+  <h2>最终“得意忘形”检验</h2>
+  <p class="subtitle">一周后，给你一个新业务需求</p>
+
+  <p>如果你能做到以下七步，你就已经“得意忘形”了：</p>
+
+  <ol>
+    <li>30 分钟内画出 DSPy 架构画布；</li>
+    <li>写出签名和指标；</li>
+    <li>让 agent 生成代码；</li>
+    <li>跑通基线；</li>
+    <li>看懂中间结果；</li>
+    <li>定位问题并让 agent 修正；</li>
+    <li>选优化器并保存成果。</li>
+  </ol>
+
+  <div class="principle">
+    <span class="label">最终结论</span>
+    <p><strong>你不需要手动在 Python 文件里打字。但你需要手动在脑子里做架构。AI 是你的手，不是你的脑。</strong></p>
+    <p style="margin-top:12px;">vibe coding 的“vibe”来自你的判断力，不是来自放弃判断。API 细节全忘掉也没关系，因为你保留了最核心的东西：<em>签名声明 what，模块定义 how，指标定义 better，优化器自动搜索，保存让成果成为资产。</em></p>
+  </div>
+</section>
+
+<footer>
+  <p>DSPy 一周学习计划 · BA 的 Vibe Coding 指南</p>
+  <p style="margin-top:8px;">基于 DSPy 官方文档与《Building LLM Applications with DSPy》整理</p>
+</footer>
+
+</div>
+</body>
+</html>
