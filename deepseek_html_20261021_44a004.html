@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方法论操作文档 · 功能分解与决策显化</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2933; --sub:#5c6b7a;
+    --line:#e3e8ee; --accent:#2563eb; --accent-soft:#eaf1ff;
+    --green:#0f9d58; --green-soft:#e8f6ee;
+    --amber:#b7791f; --amber-soft:#fdf3e0;
+    --red:#c53030; --red-soft:#fdecec;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7; font-size:15px;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:32px 20px 80px;}
+
+  /* 顶部 */
+  header.top{
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:#fff; border-radius:var(--radius); padding:28px 30px; margin-bottom:28px;
+  }
+  header.top h1{margin:0 0 8px; font-size:24px; letter-spacing:.5px;}
+  header.top p{margin:0; opacity:.9; font-size:14px;}
+  .toc{margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;}
+  .toc a{
+    background:rgba(255,255,255,.15); color:#fff; text-decoration:none;
+    padding:6px 14px; border-radius:20px; font-size:13px;
+  }
+  .toc a:hover{background:rgba(255,255,255,.28);}
+
+  /* 文档区块 */
+  section.doc{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px 30px; margin-bottom:28px;
+  }
+  section.doc > h2{
+    margin:0 0 4px; font-size:20px; color:var(--accent);
+    display:flex; align-items:center; gap:10px;
+  }
+  .skill-name{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px; background:var(--accent-soft); color:var(--accent);
+    padding:3px 10px; border-radius:6px; font-weight:600;
+  }
+  .lead{color:var(--sub); font-size:14px; margin:10px 0 22px;}
+
+  h3{
+    font-size:16px; margin:28px 0 12px; padding-left:10px;
+    border-left:4px solid var(--accent);
+  }
+  h4{font-size:14px; margin:18px 0 8px; color:var(--sub);}
+
+  /* 表格 */
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px;}
+  th,td{border:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top;}
+  th{background:#f2f5f9; font-weight:600; color:#334155;}
+  tbody tr:nth-child(even){background:#fafbfc;}
+  td code, p code, li code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    background:#eef2f7; padding:1px 6px; border-radius:4px; font-size:12.5px;
+  }
+
+  /* 层级卡片 */
+  .layers{display:grid; gap:12px; margin:16px 0;}
+  .layer{
+    border:1px solid var(--line); border-left:5px solid var(--accent);
+    border-radius:8px; padding:14px 16px; background:#fcfdff;
+  }
+  .layer .tag{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.5px;
+    background:var(--accent-soft); color:var(--accent);
+    padding:2px 9px; border-radius:5px; margin-bottom:6px;
+  }
+  .layer h5{margin:0 0 6px; font-size:14.5px;}
+  .layer p{margin:0; font-size:13.5px; color:var(--sub);}
+
+  /* 提示框 */
+  .callout{
+    border-radius:8px; padding:12px 16px; margin:14px 0; font-size:13.5px;
+    border-left:4px solid;
+  }
+  .callout strong{display:block; margin-bottom:4px;}
+  .callout.check{background:var(--green-soft); border-color:var(--green);}
+  .callout.check strong{color:var(--green);}
+  .callout.warn{background:var(--amber-soft); border-color:var(--amber);}
+  .callout.warn strong{color:var(--amber);}
+  .callout.no{background:var(--red-soft); border-color:var(--red);}
+  .callout.no strong{color:var(--red);}
+
+  /* 代码块 */
+  pre{
+    background:#1e293b; color:#e2e8f0; border-radius:8px;
+    padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.6;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  pre .ok{color:#7ee787;}
+  pre .bad{color:#ffa198;}
+
+  /* 对比 */
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+  .compare > div{border-radius:8px; padding:14px 16px; font-size:13.5px;}
+  .compare .before{background:var(--red-soft); border:1px solid #f5c2c2;}
+  .compare .after{background:var(--green-soft); border:1px solid #b7e4c7;}
+  .compare h5{margin:0 0 8px; font-size:13px; letter-spacing:.5px;}
+  .compare .before h5{color:var(--red);}
+  .compare .after h5{color:var(--green);}
+  .compare p{margin:0; color:var(--ink);}
+
+  ul.plain{margin:8px 0; padding-left:20px;}
+  ul.plain li{margin:5px 0;}
+
+  .step{
+    display:flex; gap:14px; margin:16px 0; align-items:flex-start;
+  }
+  .step .num{
+    flex:0 0 28px; height:28px; border-radius:50%;
+    background:var(--accent); color:#fff; font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .step .body{flex:1;}
+  .step .body h5{margin:2px 0 6px; font-size:14.5px;}
+  .step .body p{margin:0; font-size:13.5px; color:var(--sub);}
+
+  footer{text-align:center; color:var(--sub); font-size:12.5px; margin-top:40px;}
+  @media (max-width:640px){
+    .compare{grid-template-columns:1fr;}
+    section.doc{padding:20px 16px;}
+    .wrap{padding:16px 10px 60px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>方法论操作文档</h1>
+    <p>将项目由外向内逐层拆解：功能分解 → 中间产物 → 决策显化</p>
+    <nav class="toc">
+      <a href="#doc1">文档一 · 结构化功能分解</a>
+      <a href="#doc2">文档二 · 决策外化</a>
+      <a href="#howto">如何使用</a>
+    </nav>
+  </header>
+
+  <!-- ============ 文档一 ============ -->
+  <section class="doc" id="doc1">
+    <h2>文档一 · 结构化功能分解 <span class="skill-name">structured-functional-decomposition</span></h2>
+    <p class="lead">
+      <strong>什么时候用：</strong>当一个项目或系统需要从整体逐层拆解到功能、子功能、中间产物，以及功能之间的判断分支时，使用本技能。
+    </p>
+
+    <h3>一、核心思想</h3>
+    <p>剥洋葱式拆解的本质<strong>不是“画图”</strong>，而是三件事：</p>
+    <ol>
+      <li>先把功能拆到<strong>可独立验证</strong>的粒度；</li>
+      <li>再把衔接功能的<strong>中间产物显式化</strong>；</li>
+      <li>最后把判断从流程里<strong>拎出来单独表达</strong>。</li>
+    </ol>
+    <div class="callout check">
+      <strong>唯一质量标准</strong>
+      同一层的子功能之间<strong>不重叠、不遗漏</strong>（MECE），且每个中间产物都能被下一层直接消费。
+    </div>
+
+    <h3>二、四层拆解结构</h3>
+    <div class="layers">
+      <div class="layer">
+        <span class="tag">第 1 层</span>
+        <h5>整体与外部边界</h5>
+        <p>回答：系统边界在哪？外部依赖是谁？最终产物是什么？<br>
+        工具：A-0 上下文图 + 输出清单。要求输入、控制、输出、机制四要素齐全。</p>
+      </div>
+      <div class="layer">
+        <span class="tag">第 2 层</span>
+        <h5>功能分解</h5>
+        <p>回答：系统内部由哪几大功能构成？<br>
+        工具：A0 功能分解图。要求同一层子功能 MECE，每个功能有独立可检验的输出。</p>
+      </div>
+      <div class="layer">
+        <span class="tag">第 3 层</span>
+        <h5>中间产物与流转</h5>
+        <p>回答：功能之间靠什么数据衔接？<br>
+        工具：数据流图 / 功能—数据接口表。要求每个中间产物有<strong>唯一生产者</strong>和<strong>明确消费者</strong>。</p>
+      </div>
+      <div class="layer">
+        <span class="tag">第 4 层</span>
+        <h5>判断显化</h5>
+        <p>回答：在何处、依据什么条件做出 Y/N 分支？<br>
+        工具：决策表。要求每条规则可独立测试，条件可度量，没有“视情况”。</p>
+      </div>
+    </div>
+
+    <h3>三、各层执行细则</h3>
+
+    <h4>第 1 层：建立 A-0 上下文</h4>
+    <table>
+      <thead><tr><th>要素</th><th>含义</th><th>回答的问题</th></tr></thead>
+      <tbody>
+        <tr><td><code>Input</code> 输入</td><td>被功能消耗或转化的信息/物料</td><td>需要什么才能开始？</td></tr>
+        <tr><td><code>Control</code> 控制</td><td>约束执行的规则、标准、触发条件</td><td>在什么约束下做？</td></tr>
+        <tr><td><code>Output</code> 输出</td><td>功能产生的最终产物</td><td>做完之后世界多了什么？</td></tr>
+        <tr><td><code>Mechanism</code> 机制</td><td>执行功能依赖的人、系统或工具</td><td>由谁/什么来执行？</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <strong>阶段门控</strong>
+      A-0 必须获得批准后才能进入第 2 层。未明确“最终产物是什么”之前，禁止开始功能拆分。
+    </div>
+
+    <h4>第 2 层：A0 功能分解</h4>
+    <p>将 A-0 中的系统框拆分为 <strong>3–6 个子功能</strong>。每个子功能是一个<strong>动宾短语</strong>（如“校验订单”“计算运费”），而不是名词（如“订单模块”）。</p>
+    <div class="callout check">
+      <strong>MECE 自查</strong>
+      <ul class="plain">
+        <li><strong>重叠检查：</strong>任意两个子功能的输出中，是否有同一个中间产物由两者共同生产？是 → 合并或重新划界。</li>
+        <li><strong>遗漏检查：</strong>A-0 的每个输入/控制是否至少被一个子功能消费？每个输出是否至少被一个子功能生产？</li>
+      </ul>
+    </div>
+
+    <h4>第 3 层：中间产物显式化</h4>
+    <p>为第 2 层的每条功能间连接建立一个数据流接口条目：</p>
+    <pre>中间产物名称 | 生产者功能 | 消费者功能 | 关键字段 | 产生条件</pre>
+    <div class="callout warn">
+      <strong>判断箭头是否画错</strong>
+      如果一条箭头上找不到一个可命名的中间产物，这条箭头要么是遗漏了数据，要么是功能边界画错了。
+    </div>
+
+    <h4>第 4 层：决策表显化判断</h4>
+    <p>对第 3 层中每一个存在 Y/N 分支的位置建立决策表：</p>
+    <table>
+      <thead><tr><th>金额 &gt; 1000</th><th>信用分 ≥ 700</th><th>→</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>是</td><td>是</td><td>→</td><td>自动通过</td></tr>
+        <tr><td>是</td><td>否</td><td>→</td><td>人工审核</td></tr>
+        <tr><td>否</td><td>任意</td><td>→</td><td>自动通过</td></tr>
+      </tbody>
+    </table>
+    <div class="callout check">
+      <strong>合格标准</strong>
+      条件列中不得出现“良好”“充足”“适当”等不可度量的词；每行规则必须能被一个独立测试用例直接命中。
+    </div>
+
+    <h3>四、常见错误</h3>
+    <div class="callout no">
+      <strong>❌ 用名词代替动词做功能名</strong>
+      “订单模块”不是功能，“接收订单、校验库存、锁定金额”才是。名词会让第 2 层的 MECE 检查失效。
+    </div>
+    <div class="callout no">
+      <strong>❌ 跳过 A-0 直接拆功能</strong>
+      边界未定时的功能分解会随讨论无限扩张，最终每层都在补外部依赖。
+    </div>
+    <div class="callout no">
+      <strong>❌ 把判断藏在箭头标签里</strong>
+      在数据流箭头上写“如果库存够”，等于把第 4 层规则塞进第 3 层，导致规则不可核查。
+    </div>
+    <div class="callout no">
+      <strong>❌ 只画箭头不命名中间产物</strong>
+      没有命名的中间产物意味着没有明确的生产者和消费者，功能边界大概率是错的。
+    </div>
+
+    <h3>五、产生的价值</h3>
+    <p>按此流程拆解的项目，在第 4 层会自然产生一组<strong>可独立测试的决策表</strong>，可直接移交开发作为校验逻辑的测试用例来源，无需从文字需求中重新解读“如果”的含义。第 3 层的中间产物清单则构成<strong>接口契约</strong>的骨架——哪两个功能之间需要握手、握手对象是什么，在写代码之前就已确定。</p>
+  </section>
+
+  <!-- ============ 文档二 ============ -->
+  <section class="doc" id="doc2">
+    <h2>文档二 · 决策外化 <span class="skill-name">decision-externalization</span></h2>
+    <p class="lead">
+      <strong>什么时候用：</strong>当 Y/N 分支、业务规则或条件路由被埋在流程描述里，需要被拎出来变成可独立测试的规则时，使用本技能。
+    </p>
+
+    <h3>一、核心思想</h3>
+    <p>判断<strong>不应该“长在”流程箭头上</strong>。每一个 Y/N 分支都是一个独立的决策，它有自己的输入条件、自己的规则集合、自己的测试用例。剥离之后：</p>
+    <ul class="plain">
+      <li>流程只负责“在哪个节点调用哪个决策”；</li>
+      <li>决策表负责“给定这些条件，输出什么结果”；</li>
+      <li>流程可以稳定不变，规则可以单独修改、单独测试、单独审计。</li>
+    </ul>
+
+    <div class="compare">
+      <div class="before">
+        <h5>BEFORE · 判断与流转纠缠</h5>
+        <p>一个箭头，标签写着“如果信用好且金额不大 → 通过；否则 → 人工”。判断和流转混在一起。</p>
+      </div>
+      <div class="after">
+        <h5>AFTER · 决策独立</h5>
+        <p>流程中只保留一个“业务规则任务”节点，标注“调用决策：审批路由”。决策表独立存在，流程不知道规则细节，规则不关心流程走到哪一步。</p>
+      </div>
+    </div>
+
+    <h3>二、决策表四要素</h3>
+    <table>
+      <thead><tr><th>要素</th><th>在表中的位置</th><th>合格标准</th></tr></thead>
+      <tbody>
+        <tr><td><strong>输入条件</strong></td><td>条件列</td><td>每一列是一个可观测、可度量的变量，不是形容词</td></tr>
+        <tr><td><strong>规则行</strong></td><td>表体</td><td>每一行是一条互斥且可测试的规则；行与行之间要么互斥，要么显式声明优先级</td></tr>
+        <tr><td><strong>输出结果</strong></td><td>结果列</td><td>每个结果是一个动作或路由标签，不是“处理一下”</td></tr>
+        <tr><td><strong>命中策略</strong></td><td>表头声明</td><td>明确是唯一命中、首条命中，还是收集所有命中</td></tr>
+      </tbody>
+    </table>
+
+    <h3>三、五步执行法</h3>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <h5>定位“值得剥离”的判断</h5>
+        <p>不是所有 if 都值得建决策表。筛选信号：涉及业务规则（而非技术异常）；条件可能变化（费率、阈值、政策）；结果影响外部可见行为（通过/拒绝、路由到不同处理者）。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <h5>把条件写成可观测谓词</h5>
+        <p>每个条件必须是“一个变量 + 一个运算符 + 一个值”：</p>
+        <pre><span class="ok">✅ 信用分 ≥ 700</span>
+<span class="ok">✅ 订单金额 &gt; 1000</span>
+<span class="ok">✅ 客户等级 = "VIP"</span>
+
+<span class="bad">❌ 信用良好</span>
+<span class="bad">❌ 金额较大</span>
+<span class="bad">❌ 特殊情况</span></pre>
+        <p>不可度量的条件无法进入决策表。如果业务方只能给出形容词，任务不是“画表”，而是先帮助业务方找到形容词对应的可观测代理变量。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <h5>建立条件—结果矩阵</h5>
+        <p>列出条件的所有有业务意义的组合，而不是笛卡尔积的全部。对每个组合指定一个结果。删除不可能出现的组合，用“—”标记并在表下注明原因。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <h5>声明命中策略</h5>
+        <table>
+          <thead><tr><th>策略</th><th>含义</th><th>适用场景</th></tr></thead>
+          <tbody>
+            <tr><td><code>U</code> 唯一命中</td><td>条件组合互斥，任何输入最多命中一行</td><td>最安全，优先争取</td></tr>
+            <tr><td><code>F</code> 首条命中</td><td>规则有优先级，命中第一条即停止</td><td>例外优先于一般的场景</td></tr>
+            <tr><td><code>C</code> 收集所有</td><td>多行可同时命中，结果需要聚合</td><td>风险标记叠加等场景</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn">
+          <strong>硬性检查点</strong>
+          如果无法声明命中策略，说明条件之间存在隐藏的优先级依赖或重叠，回到第 3 步重新划界。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <h5>为每一行生成一个测试用例</h5>
+        <p>决策表的每一行都应当能被一个具体的输入元组直接触发。如果某一行写不出测试用例，这一行就是不可执行的规则——要么冗余，要么条件定义有缺口。</p>
+      </div>
+    </div>
+
+    <h3>四、常见错误</h3>
+    <div class="callout no">
+      <strong>❌ 把决策表写成 if-else 的表格版</strong>
+      如果表的每一行都在复述代码里已有的分支，而没有暴露条件组合的全貌，它就没有增加可审计性。决策表的价值在于让“所有可能的情况”在一页内可见。
+    </div>
+    <div class="callout no">
+      <strong>❌ 保留“其他情况”兜底行</strong>
+      兜底行会掩盖条件覆盖的缺口。所有组合都应显式处理；真正不存在的组合标记为“不可能”并注明理由，而不是塞进“其他”。
+    </div>
+    <div class="callout no">
+      <strong>❌ 条件列混入结果列的信息</strong>
+      条件只回答“看什么”，结果只回答“做什么”。条件里出现动作描述，说明拆分不彻底。
+    </div>
+    <div class="callout no">
+      <strong>❌ 在流程图上继续维护规则</strong>
+      决策表建立后，流程节点上的判断标签必须删除或改为“调用决策：XXX”。两处维护等于没有剥离。
+    </div>
+
+    <h3>五、产生的价值</h3>
+    <p>决策表剥离完成后，规则变更的影响范围从“通读整条流程”缩小为“定位到某一行或某几行，修改并重跑对应用例”。流程模型保持稳定，规则模型独立演进。这也正是 DMN 将决策从 BPMN 中分离出来的核心设计意图——<strong>流程稳定，规则可改，两者不互相绑架</strong>。</p>
+  </section>
+
+  <!-- ============ 如何使用 ============ -->
+  <section class="doc" id="howto">
+    <h2>如何使用这两份文档</h2>
+    <p class="lead">把两份文档分别放入 skills 目录，即可被 agent 自动发现和触发。</p>
+
+    <table>
+      <thead><tr><th>运行环境</th><th>放置路径</th></tr></thead>
+      <tbody>
+        <tr><td>Claude Code</td><td><code>~/.claude/skills/</code></td></tr>
+        <tr><td>跨运行时别名</td><td><code>~/.agents/skills/</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>触发方式</h4>
+    <p>不需要手动调用。当对话中出现对应症状时，技能描述会被自动命中：</p>
+    <ul class="plain">
+      <li>出现“需要把项目从整体拆到判断”的症状 → <code>structured-functional-decomposition</code></li>
+      <li>症状聚焦在“Y/N 分支和规则纠缠不清” → <code>decision-externalization</code></li>
+    </ul>
+
+    <div class="callout check">
+      <strong>两份文档之间的交接线</strong>
+      文档一的第 3 层输出（中间产物清单）是文档二第 1 步的输入筛选依据之一——只有当一个判断<strong>消费了已命名的中间产物</strong>、且<strong>影响外部可见行为</strong>时，它才值得被剥离为独立决策表。
+    </div>
+  </section>
+
+  <footer>方法论操作文档 · 结构化功能分解 + 决策外化</footer>
+</div>
+</body>
+</html>

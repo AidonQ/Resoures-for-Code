@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill · C4-PlantUML Diagrams</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2933; --sub:#5c6b7a;
+    --line:#e3e8ee; --accent:#2563eb; --accent-soft:#eaf1ff;
+    --green:#0f9d58; --green-soft:#e8f6ee;
+    --amber:#b7791f; --amber-soft:#fdf3e0;
+    --red:#c53030; --red-soft:#fdecec;
+    --purple:#6b46c1; --purple-soft:#f0eafc;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7; font-size:15px;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:32px 20px 80px;}
+
+  /* 顶部 */
+  header.top{
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:#fff; border-radius:var(--radius); padding:28px 30px; margin-bottom:28px;
+  }
+  header.top .skill-badge{
+    display:inline-block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px; background:rgba(255,255,255,.2); padding:3px 10px;
+    border-radius:6px; margin-bottom:10px; letter-spacing:.5px;
+  }
+  header.top h1{margin:0 0 8px; font-size:24px; letter-spacing:.5px;}
+  header.top p{margin:0; opacity:.92; font-size:14px;}
+  .toc{margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;}
+  .toc a{
+    background:rgba(255,255,255,.15); color:#fff; text-decoration:none;
+    padding:6px 14px; border-radius:20px; font-size:13px;
+  }
+  .toc a:hover{background:rgba(255,255,255,.28);}
+
+  /* 区块 */
+  section.card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 30px; margin-bottom:26px;
+  }
+  section.card > h2{
+    margin:0 0 14px; font-size:19px; color:var(--accent);
+    display:flex; align-items:center; gap:10px;
+  }
+  section.card > h2 .num{
+    flex:0 0 26px; height:26px; border-radius:50%;
+    background:var(--accent); color:#fff; font-size:13px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  h3{font-size:16px; margin:26px 0 12px; padding-left:10px; border-left:4px solid var(--accent);}
+  h4{font-size:14px; margin:18px 0 8px; color:var(--sub);}
+  .lead{color:var(--sub); font-size:14px; margin:0 0 16px;}
+  p{margin:10px 0;}
+
+  /* 表格 */
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px;}
+  th,td{border:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top;}
+  th{background:#f2f5f9; font-weight:600; color:#334155;}
+  tbody tr:nth-child(even){background:#fafbfc;}
+  td code, p code, li code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    background:#eef2f7; padding:1px 6px; border-radius:4px; font-size:12.5px;
+    color:#b91c1c;
+  }
+
+  /* 提示框 */
+  .callout{
+    border-radius:8px; padding:12px 16px; margin:14px 0; font-size:13.5px;
+    border-left:4px solid;
+  }
+  .callout strong{display:block; margin-bottom:4px;}
+  .callout.check{background:var(--green-soft); border-color:var(--green);}
+  .callout.check strong{color:var(--green);}
+  .callout.warn{background:var(--amber-soft); border-color:var(--amber);}
+  .callout.warn strong{color:var(--amber);}
+  .callout.no{background:var(--red-soft); border-color:var(--red);}
+  .callout.no strong{color:var(--red);}
+  .callout.info{background:var(--purple-soft); border-color:var(--purple);}
+  .callout.info strong{color:var(--purple);}
+  .callout ul{margin:6px 0 0; padding-left:20px;}
+  .callout ul li{margin:4px 0;}
+
+  /* 代码 */
+  pre{
+    background:#1e293b; color:#e2e8f0; border-radius:8px;
+    padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.65;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    margin:12px 0;
+  }
+  pre .cmt{color:#94a3b8;}
+  pre .ok{color:#7ee787;}
+  pre .bad{color:#ffa198;}
+  pre .kw{color:#79c0ff;}
+  pre .str{color:#a5d6ff;}
+
+  /* 对比 */
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+  .compare > div{border-radius:8px; padding:14px 16px; font-size:13.5px;}
+  .compare .before{background:var(--red-soft); border:1px solid #f5c2c2;}
+  .compare .after{background:var(--green-soft); border:1px solid #b7e4c7;}
+  .compare h5{margin:0 0 8px; font-size:13px; letter-spacing:.5px;}
+  .compare .before h5{color:var(--red);}
+  .compare .after h5{color:var(--green);}
+  .compare p{margin:0; color:var(--ink);}
+
+  /* 步骤 */
+  .step{display:flex; gap:14px; margin:18px 0; align-items:flex-start;}
+  .step .num{
+    flex:0 0 28px; height:28px; border-radius:50%;
+    background:var(--accent); color:#fff; font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .step .body{flex:1;}
+  .step .body h5{margin:2px 0 6px; font-size:14.5px;}
+  .step .body p{margin:6px 0; font-size:13.5px; color:var(--sub);}
+
+  ul.plain{margin:8px 0; padding-left:20px;}
+  ul.plain li{margin:5px 0;}
+
+  /* 代码块标题 */
+  .code-title{
+    font-size:12px; color:var(--sub); margin:14px 0 -6px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+
+  footer{text-align:center; color:var(--sub); font-size:12.5px; margin-top:40px;}
+  @media (max-width:640px){
+    .compare{grid-template-columns:1fr;}
+    section.card{padding:20px 16px;}
+    .wrap{padding:16px 10px 60px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="skill-badge">SKILL · c4-plantuml-diagrams</span>
+    <h1>C4-PlantUML Diagrams</h1>
+    <p>把 C4 模型的分层表达，落成可版本控制、可 diff 的 PlantUML 文本</p>
+    <nav class="toc">
+      <a href="#overview">概览</a>
+      <a href="#when">何时使用</a>
+      <a href="#core">核心模式</a>
+      <a href="#quick">速查表</a>
+      <a href="#impl">执行步骤</a>
+      <a href="#mistakes">常见错误</a>
+      <a href="#howto">如何使用</a>
+    </nav>
+  </header>
+
+  <!-- 概览 -->
+  <section class="card" id="overview">
+    <h2><span class="num">1</span>概览</h2>
+    <p>C4-PlantUML 把 PlantUML 的文本绘图能力和 C4 模型的分层表达结合起来：<strong>用宏定义元素（Person、System、Container…），用关系宏连接元素，用布局宏控制方向</strong>。</p>
+    <p>它的价值不在“画得好看”，而在 <strong>架构描述和代码一样可版本控制、可 diff、可复用</strong>。</p>
+    <div class="callout check">
+      <strong>这个 Skill 的目标</strong>
+      让你<strong>在 30 秒内选对 include 文件，5 分钟内产出一张结构正确的 C4 图</strong>，而不是从 400 多行 README 里慢慢翻。
+    </div>
+  </section>
+
+  <!-- 何时使用 -->
+  <section class="card" id="when">
+    <h2><span class="num">2</span>何时使用</h2>
+    <ul class="plain">
+      <li>需要一张 <strong>系统上下文图</strong>，说清“谁在用这个系统、它依赖哪些外部系统”</li>
+      <li>需要一张 <strong>容器图</strong>，说清“这个系统由哪几个可部署单元组成、它们之间怎么通信”</li>
+      <li>需要一张 <strong>组件图</strong>，深入某个容器，展示内部的逻辑模块</li>
+      <li>需要表达 <strong>动态调用顺序</strong> 或 <strong>部署节点分布</strong></li>
+      <li>需要在 Markdown、文档、代码仓库里 <strong>直接嵌入架构图源码</strong></li>
+    </ul>
+    <div class="callout warn">
+      <strong>什么时候别用</strong>
+      需要像素级自由排版、复杂装饰、非 C4 风格的图，直接用原生 PlantUML 或 draw.io；需要交互式下钻，看 LikeC4 或 GitDiagram。
+    </div>
+  </section>
+
+  <!-- 核心模式 -->
+  <section class="card" id="core">
+    <h2><span class="num">3</span>核心模式</h2>
+    <div class="compare">
+      <div class="before">
+        <h5>BEFORE · 凭感觉写</h5>
+        <p>打开空白 <code>.puml</code> 文件，不知道 include 哪个文件，元素类型凭感觉写，关系线四处乱飞。</p>
+      </div>
+      <div class="after">
+        <h5>AFTER · 五步走</h5>
+        <p>按“图类型 → include 文件 → 元素宏 → 关系宏 → 布局宏”五步走。每类图只 include 一个主文件，元素和关系都用 C4 语义宏，布局用全局宏控制方向，不手工调坐标。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 速查表 -->
+  <section class="card" id="quick">
+    <h2><span class="num">4</span>速查表</h2>
+
+    <h3>图类型 → include 文件对照</h3>
+    <table>
+      <thead>
+        <tr><th>图类型</th><th>include 文件</th><th>核心新增宏</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>System Context / Landscape</strong></td>
+          <td><code>C4_Context.puml</code></td>
+          <td><code>Person</code>、<code>System</code>、<code>System_Ext</code>、<code>Boundary</code></td>
+        </tr>
+        <tr>
+          <td><strong>Container</strong></td>
+          <td><code>C4_Container.puml</code></td>
+          <td>在 Context 基础上增加 <code>Container</code>、<code>ContainerDb</code>、<code>ContainerQueue</code></td>
+        </tr>
+        <tr>
+          <td><strong>Component</strong></td>
+          <td><code>C4_Component.puml</code></td>
+          <td>在 Container 基础上增加 <code>Component</code>、<code>ComponentDb</code>、<code>ComponentQueue</code></td>
+        </tr>
+        <tr>
+          <td><strong>Dynamic</strong></td>
+          <td><code>C4_Dynamic.puml</code></td>
+          <td>用 <code>Index()</code> / <code>$index</code> 给关系编号，表达调用顺序</td>
+        </tr>
+        <tr>
+          <td><strong>Deployment</strong></td>
+          <td><code>C4_Deployment.puml</code></td>
+          <td>在 Container 基础上增加 <code>Deployment_Node</code> / <code>Node</code></td>
+        </tr>
+        <tr>
+          <td><strong>Sequence (C4 styled)</strong></td>
+          <td><code>C4_Sequence.puml</code></td>
+          <td>复用元素宏，但边界用 <code>Boundary_End()</code> 而不是 <code>{}</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout no">
+      <strong>硬性规则</strong>
+      <code>C4_Container.puml</code> 已经包含 Context 宏，<code>C4_Component.puml</code> 已经包含 Container 宏。<strong>不要同时 include 多个层级文件</strong>，否则重复定义会报错。
+    </div>
+
+    <h3>常用元素宏（Context + Container 层）</h3>
+    <pre><span class="kw">Person</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>, ?sprite, ?tags, ?link)
+<span class="kw">Person_Ext</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>)
+<span class="kw">System</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>)
+<span class="kw">System_Ext</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>)
+<span class="kw">SystemDb</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>)
+<span class="kw">SystemQueue</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Descr"</span>)
+
+<span class="kw">Container</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Techn"</span>, <span class="str">"?Descr"</span>, ?sprite, ?tags)
+<span class="kw">ContainerDb</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Techn"</span>, <span class="str">"?Descr"</span>)
+<span class="kw">ContainerQueue</span>(alias, <span class="str">"Label"</span>, <span class="str">"?Techn"</span>, <span class="str">"?Descr"</span>)
+
+<span class="kw">System_Boundary</span>(alias, <span class="str">"Label"</span>) { ... }
+<span class="kw">Enterprise_Boundary</span>(alias, <span class="str">"Label"</span>) { ... }
+<span class="kw">Boundary</span>(alias, <span class="str">"Label"</span>, ?type) { ... }</pre>
+    <p>可选参数用 <code>?arg</code> 标记；可以直接用 <code>$arg=...</code> 单独设置某个可选参数，不必填满前面的位置参数。</p>
+
+    <h3>关系宏</h3>
+    <table>
+      <thead>
+        <tr><th>宏</th><th>方向</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Rel(from, to, "label", ?techn)</code></td><td>自动</td><td>最常用，方向由布局引擎决定</td></tr>
+        <tr><td><code>Rel_R</code> / <code>Rel_L</code> / <code>Rel_U</code> / <code>Rel_D</code></td><td>右 / 左 / 上 / 下</td><td>强制某个方向</td></tr>
+        <tr><td><code>BiRel(from, to, "label")</code></td><td>双向</td><td>双向通信</td></tr>
+        <tr><td><code>Rel_Back</code></td><td>反向</td><td>表达“被调用”关系</td></tr>
+      </tbody>
+    </table>
+    <p><code>Rel</code> 的第 4 个参数是技术/协议标注（如 <code>"HTTPS"</code>、<code>"JSON/HTTP"</code>），不是描述。</p>
+
+    <h3>布局宏</h3>
+    <pre><span class="kw">LAYOUT_TOP_DOWN</span>()      <span class="cmt">' 默认，从上到下</span>
+<span class="kw">LAYOUT_LEFT_RIGHT</span>()    <span class="cmt">' 从左到右</span>
+<span class="kw">LAYOUT_LANDSCAPE</span>()     <span class="cmt">' 横向</span></pre>
+    <div class="callout info">
+      <strong>不需要显式调用 LAYOUT_TOP_DOWN()</strong>
+      它是默认行为。只有需要改变方向时才调用另外两个。PlantUML v2.12.0 之后 <code>LAYOUT_LANDSCAPE()</code> 与 <code>Lay_*()</code> 的组合行为有变化，旧行为可通过 <code>!NO_LAY_ROTATE=1</code> 恢复。
+    </div>
+  </section>
+
+  <!-- 执行步骤 -->
+  <section class="card" id="impl">
+    <h2><span class="num">5</span>执行步骤</h2>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <h5>选择 include 方式</h5>
+        <p>三种方式按场景选：</p>
+        <div class="code-title">方式 A · 标准库（推荐，零网络依赖）</div>
+        <pre>!include &lt;C4/C4_Container&gt;</pre>
+        <p>PlantUML 内置了最近发布的 C4 文件，不需要额外下载，也不需要联网。</p>
+
+        <div class="code-title">方式 B · 远程最新版（需要联网）</div>
+        <pre>!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml</pre>
+
+        <div class="code-title">方式 C · 本地文件（离线 + 固定版本）</div>
+        <pre>!include C4_Container.puml</pre>
+        <p>下载仓库根目录的 <code>C4_*.puml</code> 文件，配合 PlantUML 命令行参数 <code>-DRELATIVE_INCLUDE="."</code> 使用。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <h5>先写元素，再写关系</h5>
+        <p><strong>不要一边写元素一边画关系线。</strong>先把同一层级的所有元素定义完，再集中写关系。这样布局引擎有完整的图结构，避免局部优化导致整体别扭。</p>
+        <div class="code-title">Container 图最小可运行骨架</div>
+        <pre><span class="kw">@startuml</span>
+!include &lt;C4/C4_Container&gt;
+
+<span class="kw">Person</span>(admin, <span class="str">"Administrator"</span>)
+<span class="kw">System_Boundary</span>(c1, <span class="str">"Sample System"</span>) {
+  <span class="kw">Container</span>(web_app, <span class="str">"Web Application"</span>, <span class="str">"C#, ASP.NET Core"</span>, <span class="str">"Allows users to compare timelines"</span>)
+}
+<span class="kw">System</span>(twitter, <span class="str">"Twitter"</span>)
+
+<span class="kw">Rel</span>(admin, web_app, <span class="str">"Uses"</span>, <span class="str">"HTTPS"</span>)
+<span class="kw">Rel</span>(web_app, twitter, <span class="str">"Gets tweets from"</span>, <span class="str">"HTTPS"</span>)
+
+<span class="kw">@enduml</span></pre>
+        <p>这个骨架来自官方 Getting Started 示例，可以直接作为最小可运行模板。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <h5>用标签和样式做轻量语义分组</h5>
+        <p>当需要区分版本、环境、备份链路等维度时，用 <code>AddElementTag</code> / <code>AddRelTag</code> + <code>$tags</code>，而不是手工逐个改颜色：</p>
+        <pre><span class="kw">AddElementTag</span>(<span class="str">"v1.0"</span>, $borderColor=<span class="str">"#d73027"</span>)
+<span class="kw">AddElementTag</span>(<span class="str">"backup"</span>, $fontColor=<span class="str">"orange"</span>)
+<span class="kw">AddRelTag</span>(<span class="str">"backup"</span>, $textColor=<span class="str">"orange"</span>, $lineStyle=DashedLine())
+
+<span class="kw">Container</span>(spa, <span class="str">"SPA"</span>, <span class="str">"angular"</span>, $tags=<span class="str">"v1.0"</span>)
+<span class="kw">Container</span>(archive, <span class="str">"Archive"</span>, <span class="str">"Audit"</span>, $tags=<span class="str">"backup"</span>)
+<span class="kw">Rel_L</span>(api, archive, <span class="str">"Writes"</span>, $tags=<span class="str">"backup"</span>)</pre>
+        <p><code>SHOW_LEGEND()</code> 会自动生成图例，解释每个标签的含义。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <h5>控制方向，而不是硬调坐标</h5>
+        <p>优先用 <code>Rel_R</code> / <code>Rel_D</code> 等方向关系宏，其次用 <code>Lay_U</code> / <code>Lay_D</code> / <code>Lay_L</code> / <code>Lay_R</code> 对无关系的元素做排列。<code>Lay_Distance(from, to, ?distance)</code> 用于微调间距，但应作为最后手段。</p>
+        <div class="callout warn">
+          <strong>硬性检查点</strong>
+          如果一张图里出现大量手工坐标、空白行、隐形节点来“挤位置”，说明布局宏用错了方向，回到步骤 2 检查关系是否都用了方向宏。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <div class="body">
+        <h5>按图类型补齐专用宏</h5>
+        <ul class="plain">
+          <li><strong>Dynamic 图</strong>：用 <code>Rel(..., $index=Index())</code> 或 <code>SetIndex()</code> 给调用编号，<code>$index</code> 会渲染成序号。</li>
+          <li><strong>Deployment 图</strong>：用 <code>Deployment_Node</code> / <code>Node</code> 包裹容器，表达物理/虚拟部署节点。</li>
+          <li><strong>Sequence 图</strong>：边界<strong>不要用 <code>{}</code></strong>，用 <code>Boundary_End()</code> 结束；只支持扩展后的 <code>Rel</code> 宏，支持 <code>$rel</code> 指定 PlantUML 箭头类型。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 常见错误 -->
+  <section class="card" id="mistakes">
+    <h2><span class="num">6</span>常见错误</h2>
+
+    <div class="callout no">
+      <strong>❌ 同时 include 多个层级文件</strong>
+      <code>C4_Container.puml</code> 已经包含 Context 宏，再 include <code>C4_Context.puml</code> 会导致重复定义。只 include 最深的那一层。
+    </div>
+
+    <div class="callout no">
+      <strong>❌ 把描述写在技术参数位置</strong>
+      <code>Container(api, "API", "Handles business logic")</code> 会把描述渲染成“技术”一栏。技术参数应写 <code>"Java"</code>、<code>"Spring Boot"</code>，描述用第 4 个参数。
+    </div>
+
+    <div class="callout no">
+      <strong>❌ 用 Rel 代替方向宏后手工调整</strong>
+      方向不对时优先换 <code>Rel_R</code> / <code>Rel_L</code>，而不是加空白行或隐形节点。
+    </div>
+
+    <div class="callout no">
+      <strong>❌ 在 Sequence 图中用 {} 画边界</strong>
+      C4 styled Sequence 图要求用 <code>Boundary_End()</code>，这是与所有其他图类型的明确例外。
+    </div>
+
+    <div class="callout no">
+      <strong>❌ 依赖 NO_LAY_ROTATE=1 做新图</strong>
+      它只是兼容旧行为的开关，新图不应依赖这个模式。
+    </div>
+  </section>
+
+  <!-- 价值 -->
+  <section class="card">
+    <h2><span class="num">7</span>产生的价值</h2>
+    <p>一张用 C4-PlantUML 写成的 Container 图，源码通常可以控制在 <strong>20–40 行</strong>，却能同时表达：系统边界、外部依赖、容器职责、技术栈、通信协议。</p>
+    <p>它可以直接提交进 Git 仓库，与代码一起 review；修改一个 <code>Container()</code> 调用，diff 只影响那一行，而不是一整张图片的二进制变更。</p>
+    <div class="callout check">
+      <strong>适用场景</strong>
+      对于需要反复讨论“这个服务该不该独立部署”“这个依赖是不是外部系统”的场景，改一行、渲染一次的成本，远低于打开绘图工具重画。
+    </div>
+  </section>
+
+  <!-- 如何使用 -->
+  <section class="card" id="howto">
+    <h2><span class="num">8</span>这个 Skill 怎么用</h2>
+    <p>把文件夹放到 <code>~/.claude/skills/</code> 或 <code>~/.agents/skills/</code>。触发条件写在 description 里：当对话中出现“画 C4 图”“系统上下文”“容器图”“组件图”“PlantUML 架构图”等需求时，Skill 会被命中。</p>
+
+    <h3>蒸馏时删掉了什么、保留了什么</h3>
+    <table>
+      <thead>
+        <tr><th>类别</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>删掉</strong></td>
+          <td>完整的 435 行 README、所有 VSCode/IntelliJ 插件配置、全部高级 sample、sprites 图标库的逐一列举、版本历史。</td>
+        </tr>
+        <tr>
+          <td><strong>保留</strong></td>
+          <td>include 的三种方式、四类图的宏选择、关系宏的方向控制、布局宏、标签机制、五个最常见的错误。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout info">
+      <strong>保留的依据</strong>
+      这五类内容覆盖了<strong>“从零到一张可用的 C4 图”的完整最短路径</strong>，其余细节在需要时查原仓库即可。
+    </div>
+  </section>
+
+  <footer>C4-PlantUML Diagrams · Skill 阅读版 · 源仓库 plantuml-stdlib/C4-PlantUML</footer>
+</div>
+</body>
+</html>
